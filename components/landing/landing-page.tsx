@@ -269,8 +269,7 @@ export function LandingPage() {
 
           {/* Subtext */}
           <p className="max-w-xl mx-auto text-lg text-white/50 leading-relaxed mb-10">
-            Arca tracks every recurring payment, forecasts your spending for the next 12 months,
-            and gives you beautiful analytics to take back control of your finances.
+            Know exactly where your money goes.
           </p>
 
           {/* CTAs */}

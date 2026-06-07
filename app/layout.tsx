@@ -11,7 +11,7 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 
 export const metadata: Metadata = {
   title: 'Arca — Subscription & Finance Management',
-  description: 'Track subscriptions, forecast spending, and manage your budgets with beautiful analytics.',
+  description: 'Know exactly where your money goes.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
