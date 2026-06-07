@@ -1,26 +1,177 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  --font-heading: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
 }
 
+/* ── Light mode – premium off-white (Stripe/Vercel-inspired) ── */
+:root {
+  --background: oklch(0.979 0 0);
+  --foreground: oklch(0.13 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.13 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0 0);
+  --primary: oklch(0.511 0.262 276.966);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.962 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.962 0 0);
+  --muted-foreground: oklch(0.52 0 0);
+  --accent: oklch(0.962 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.9 0.002 285);
+  --input: oklch(0.9 0.002 285);
+  --ring: oklch(0.511 0.262 276.966);
+  --chart-1: oklch(0.511 0.262 276.966);
+  --chart-2: oklch(0.585 0.233 264.531);
+  --chart-3: oklch(0.671 0.194 264.531);
+  --chart-4: oklch(0.731 0.143 264.531);
+  --chart-5: oklch(0.634 0.004 285.75);
+  --radius: 0.5rem;
+  /* Layered shadow tokens for light */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-popover: 0 4px 24px -4px rgb(0 0 0 / 0.12), 0 2px 8px -2px rgb(0 0 0 / 0.06);
+}
+
+/* ── Dark mode – deep zinc + indigo ── */
+.dark {
+  --background: oklch(0.107 0.004 285.75);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.141 0.005 285.75);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.163 0.005 285.75);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.585 0.233 264.531);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.224 0.006 285.75);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.224 0.006 285.75);
+  --muted-foreground: oklch(0.634 0.004 285.75);
+  --accent: oklch(0.271 0.006 285.75);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.224 0.006 285.75);
+  --input: oklch(0.224 0.006 285.75);
+  --ring: oklch(0.585 0.233 264.531);
+  --chart-1: oklch(0.585 0.233 264.531);
+  --chart-2: oklch(0.671 0.194 264.531);
+  --chart-3: oklch(0.731 0.143 264.531);
+  --chart-4: oklch(0.524 0.027 285.75);
+  --chart-5: oklch(0.634 0.004 285.75);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-popover: 0 8px 32px -4px rgb(0 0 0 / 0.5), 0 4px 12px -4px rgb(0 0 0 / 0.3);
+}
+
+/* ── Tailwind token mappings ── */
 @theme inline {
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ── Base ── */
+html, body { height: 100%; }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
+
+/* ── Theme transition – applied only when toggling ── */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 180ms ease,
+    fill 180ms ease,
+    stroke 180ms ease,
+    box-shadow 220ms ease !important;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
+
+/* ── Selection ── */
+::selection {
+  background: oklch(0.585 0.233 264.531 / 0.18);
+  color: var(--foreground);
+}
+
+/* ── Skeleton shimmer ── */
+@keyframes shimmer {
+  0%   { background-position: -400% 0; }
+  100% { background-position:  400% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted)        0%,
+    var(--border)       35%,
+    var(--muted)        50%,
+    var(--muted)       100%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Light mode skeleton is a bit lighter */
+:root .skeleton {
+  background: linear-gradient(
+    90deg,
+    oklch(0.93 0 0)  0%,
+    oklch(0.97 0 0) 35%,
+    oklch(0.93 0 0) 50%,
+    oklch(0.93 0 0) 100%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ── Card shadow helper ── */
+.card-shadow { box-shadow: var(--shadow-card); }
+.popover-shadow { box-shadow: var(--shadow-popover); }
