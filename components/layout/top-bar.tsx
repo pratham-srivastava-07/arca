@@ -19,7 +19,7 @@ const PAGE_TITLES: Record<string, string> = {
 export function TopBar() {
   const pathname = usePathname()
   const openPalette = useAppStore((s) => s.setCommandPaletteOpen)
-  const title = PAGE_TITLES[pathname] ?? 'Arca'
+  const title = PAGE_TITLES[pathname] ?? 'Sublytics'
 
   return (
     <header className="flex items-center justify-between h-14 px-5 shrink-0 border-b border-border bg-background">

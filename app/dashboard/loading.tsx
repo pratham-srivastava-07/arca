@@ -1,66 +1,56 @@
-import { GlassCard } from '@/components/ui/glass-card'
-
-function Shimmer({ className }: { className?: string }) {
-  return (
-    <div className={`animate-pulse rounded-md bg-muted ${className}`} />
-  )
-}
+import {
+  Skeleton, MetricCardSkeleton, ChartCardSkeleton, TransactionRowSkeleton,
+} from '@/components/ui/skeleton'
 
 export default function DashboardLoading() {
   return (
     <div className="max-w-5xl mx-auto px-5 py-8 space-y-8">
-      <div>
-        <Shimmer className="h-4 w-32 mb-2" />
-        <Shimmer className="h-7 w-52" />
+      <div className="space-y-2">
+        <Skeleton className="w-24 h-3 rounded" />
+        <Skeleton className="w-64 h-7 rounded" />
       </div>
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
-        {[...Array(4)].map((_, i) => (
-          <GlassCard key={i} padding="sm">
-            <Shimmer className="h-3 w-20 mb-2" />
-            <Shimmer className="h-8 w-28" />
-          </GlassCard>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <MetricCardSkeleton key={i} />
         ))}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
         <div className="xl:col-span-3">
-          <GlassCard>
-            <Shimmer className="h-4 w-24 mb-1" />
-            <Shimmer className="h-3 w-16 mb-5" />
-            <Shimmer className="h-44 w-full" />
-          </GlassCard>
+          <ChartCardSkeleton height={176} />
         </div>
         <div className="xl:col-span-2">
-          <GlassCard className="h-full">
-            <Shimmer className="h-4 w-28 mb-4" />
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex items-center gap-3 mb-4">
-                <Shimmer className="w-8 h-8 rounded-lg" />
-                <div className="flex-1">
-                  <Shimmer className="h-3.5 w-24 mb-1" />
-                  <Shimmer className="h-3 w-16" />
+          <div className="rounded-xl bg-card border border-border p-5 h-full card-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <Skeleton className="w-32 h-3.5 rounded" />
+              <Skeleton className="w-14 h-2.5 rounded" />
+            </div>
+            <div className="space-y-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <Skeleton className="w-8 h-8 rounded-xl shrink-0" />
+                  <div className="flex-1 space-y-1.5">
+                    <Skeleton className="w-20 h-3 rounded" />
+                    <Skeleton className="w-12 h-2.5 rounded" />
+                  </div>
+                  <Skeleton className="w-12 h-3 rounded" />
                 </div>
-                <Shimmer className="h-4 w-14" />
-              </div>
-            ))}
-          </GlassCard>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <GlassCard>
-        <Shimmer className="h-4 w-36 mb-4" />
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center gap-3 py-2.5 border-b border-border/40 last:border-0">
-            <Shimmer className="w-7 h-7 rounded-md" />
-            <div className="flex-1">
-              <Shimmer className="h-3.5 w-32 mb-1" />
-              <Shimmer className="h-3 w-24" />
-            </div>
-            <Shimmer className="h-4 w-16" />
-          </div>
+      <div className="rounded-xl bg-card border border-border p-5 card-shadow">
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton className="w-36 h-3.5 rounded" />
+          <Skeleton className="w-10 h-2.5 rounded" />
+        </div>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <TransactionRowSkeleton key={i} />
         ))}
-      </GlassCard>
+      </div>
     </div>
   )
 }

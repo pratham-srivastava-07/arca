@@ -25,7 +25,7 @@ function DashboardMockup() {
           <div className="flex-1 mx-4">
             <div className="flex items-center gap-2 bg-white/5 rounded-md px-3 py-1.5 max-w-xs mx-auto">
               <div className="w-3 h-3 rounded-full bg-green-500/60" />
-              <span className="text-[11px] text-white/40 font-mono">arca.app/dashboard</span>
+              <span className="text-[11px] text-white/40 font-mono">sublytics.app/dashboard</span>
             </div>
           </div>
         </div>
@@ -224,7 +224,7 @@ export function LandingPage() {
           <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary">
             <Zap className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
           </div>
-          <span className="font-semibold text-sm tracking-tight text-white">Arca</span>
+          <span className="font-semibold text-sm tracking-tight text-white">Sublytics</span>
         </div>
         <div className="flex items-center gap-3">
           <Link
@@ -514,10 +514,10 @@ export function LandingPage() {
             <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary">
               <Zap className="w-3 h-3 text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-semibold text-sm text-white/80">Arca</span>
+            <span className="font-semibold text-sm text-white/80">Sublytics</span>
           </div>
           <p className="text-sm text-white/30">
-            &copy; {new Date().getFullYear()} Arca. Built with care.
+            &copy; {new Date().getFullYear()} Sublytics. Built with care.
           </p>
           <div className="flex items-center gap-6 text-sm text-white/40">
             <Link href="/sign-in" className="hover:text-white/70 transition-colors">Sign in</Link>

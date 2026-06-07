@@ -1,60 +1,17 @@
-import {
-  Skeleton, MetricCardSkeleton, ChartCardSkeleton, TransactionRowSkeleton,
-} from '@/components/ui/skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
 
-export default function DashboardLoading() {
+export default function RootLoading() {
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="max-w-5xl mx-auto px-5 py-8 space-y-8">
-        {/* Greeting */}
-        <div className="space-y-2">
-          <Skeleton className="w-24 h-3 rounded" />
-          <Skeleton className="w-64 h-7 rounded" />
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2.5L17.5 6.875V13.125L10 17.5L2.5 13.125V6.875L10 2.5Z" stroke="var(--primary)" strokeWidth="1.5" strokeLinejoin="round"/>
+          </svg>
         </div>
-
-        {/* Metric cards */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <MetricCardSkeleton key={i} />
-          ))}
-        </div>
-
-        {/* Chart + subscriptions */}
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-          <div className="xl:col-span-3">
-            <ChartCardSkeleton height={176} />
-          </div>
-          <div className="xl:col-span-2">
-            <div className="rounded-xl bg-card border border-border p-5 h-full card-shadow">
-              <div className="flex items-center justify-between mb-4">
-                <Skeleton className="w-32 h-3.5 rounded" />
-                <Skeleton className="w-14 h-2.5 rounded" />
-              </div>
-              <div className="space-y-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <Skeleton className="w-8 h-8 rounded-xl shrink-0" />
-                    <div className="flex-1 space-y-1.5">
-                      <Skeleton className="w-20 h-3 rounded" />
-                      <Skeleton className="w-12 h-2.5 rounded" />
-                    </div>
-                    <Skeleton className="w-12 h-3 rounded" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Transactions */}
-        <div className="rounded-xl bg-card border border-border p-5 card-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <Skeleton className="w-36 h-3.5 rounded" />
-            <Skeleton className="w-10 h-2.5 rounded" />
-          </div>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <TransactionRowSkeleton key={i} />
-          ))}
+        <div className="flex flex-col items-center gap-2">
+          <Skeleton className="w-48 h-3 rounded" />
+          <Skeleton className="w-32 h-2.5 rounded" />
         </div>
       </div>
     </div>

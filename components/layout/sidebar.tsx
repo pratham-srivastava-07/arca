@@ -48,7 +48,7 @@ export function Sidebar() {
               transition={{ duration: 0.18 }}
               className="ml-2.5 font-semibold text-sm tracking-tight text-foreground whitespace-nowrap"
             >
-              Arca
+              Sublytics
             </motion.span>
           )}
         </AnimatePresence>

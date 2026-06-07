@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 async function main() {
   // Replace with your actual Clerk user ID after signing up
   const DEMO_CLERK_ID = process.env.DEMO_CLERK_ID || 'user_demo'
-  const DEMO_EMAIL = process.env.DEMO_EMAIL || 'pratham@arca.app'
+  const DEMO_EMAIL = process.env.DEMO_EMAIL || 'prathamrajsri2003@gmail.com'
 
   console.log('🌱 Seeding database...')
 

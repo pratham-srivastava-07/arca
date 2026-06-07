@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <path d="M8 6v4M6 7l2 2 2-2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <span className="font-semibold text-sm tracking-tight text-foreground">Arca</span>
+          <span className="font-semibold text-sm tracking-tight text-foreground">Sublytics</span>
         </div>
         {children}
       </div>

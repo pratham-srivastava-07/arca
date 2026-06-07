@@ -107,7 +107,7 @@ export function OnboardingClient({ userName }: Props) {
         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary">
           <Zap className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={2.5} />
         </div>
-        <span className="font-semibold text-sm tracking-tight text-foreground">Arca</span>
+        <span className="font-semibold text-sm tracking-tight text-foreground">Sublytics</span>
       </div>
 
       {/* Progress */}
@@ -139,7 +139,7 @@ export function OnboardingClient({ userName }: Props) {
                 Welcome, {firstName}!
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-                Let's set up your Arca account. It takes about 2 minutes and you'll instantly see your subscription costs.
+                Let's set up your Sublytics account. It takes about 2 minutes and you'll instantly see your subscription costs.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-left">
                 {[
