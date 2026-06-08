@@ -10,7 +10,7 @@ const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Sublytics — Subscription & Finance Management',
+  title: 'Arca— Subscription & Finance Management',
   description: 'Know exactly where your money goes. Track subscriptions, analyze spending, forecast budgets.',
 }
 
