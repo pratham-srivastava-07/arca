@@ -55,7 +55,7 @@ export function OnboardingClient({ userName }: Props) {
   const toggleService = (name: string) => {
     setSelected((prev) => {
       const next = new Set(prev)
-      next.has(name) ? next.delete(name) : next.add(name)
+      if (next.has(name)) { next.delete(name) } else { next.add(name) }
       return next
     })
   }
@@ -139,7 +139,7 @@ export function OnboardingClient({ userName }: Props) {
                 Welcome, {firstName}!
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-                Let's set up your Arca account. It takes about 2 minutes and you'll instantly see your subscription costs.
+                Let&apos;s set up your Arca account. It takes about 2 minutes and you&apos;ll instantly see your subscription costs.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-left">
                 {[
@@ -292,7 +292,7 @@ export function OnboardingClient({ userName }: Props) {
               >
                 <Check className="w-10 h-10 text-green-500" />
               </motion.div>
-              <h2 className="text-3xl font-bold text-foreground mb-3">You're all set!</h2>
+              <h2 className="text-3xl font-bold text-foreground mb-3">You&apos;re all set!</h2>
               <p className="text-muted-foreground mb-4 max-w-sm mx-auto">
                 {selected.size > 0
                   ? `We'll track your ${selected.size} subscription${selected.size !== 1 ? 's' : ''} and give you instant insights.`

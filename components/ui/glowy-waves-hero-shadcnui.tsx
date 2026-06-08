@@ -17,12 +17,6 @@ interface WaveConfig {
 
 const highlightPills = ["Real-time tracking", "12-month forecasting", "No bank linking"] as const;
 
-const heroStats: { label: string; value: string }[] = [
-  { label: "Money tracked", value: "$2.3M" },
-  { label: "Subscriptions found", value: "50K+" },
-  { label: "Active users", value: "12K" },
-];
-
 const containerVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, staggerChildren: 0.12 } },
@@ -31,14 +25,6 @@ const containerVariants: Variants = {
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-
-const statsVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1, scale: 1,
-    transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.08 },
-  },
 };
 
 export function GlowyWavesHero() {

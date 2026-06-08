@@ -58,7 +58,7 @@ export function ForecastingClient({ subscriptions }: { subscriptions: Subscripti
   const annualProjected = chartData.reduce((a, d) => a + d.projected, 0)
 
   const toggleScenario = (sub: Subscription, type: 'price_change' | 'cancel', delta: number) => {
-    const key = `${sub.id}_${type}`
+    const _key = `${sub.id}_${type}`
     setScenarios((prev) => {
       const exists = prev.find((sc) => sc.subscriptionId === sub.id && sc.type === type)
       if (exists) return prev.filter((sc) => !(sc.subscriptionId === sub.id && sc.type === type))

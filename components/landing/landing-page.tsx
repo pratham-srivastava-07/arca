@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 import {
   Zap, ArrowRight, BarChart3, CreditCard, TrendingUp, Target,
-  PiggyBank, Search, CheckCircle, ChevronRight, LayoutDashboard,
+  PiggyBank, Search, CheckCircle, LayoutDashboard,
 } from 'lucide-react'
 import { GlowyWavesHero } from '@/components/ui/glowy-waves-hero-shadcnui'
 import { Footerdemo } from '@/components/ui/footer-section'
