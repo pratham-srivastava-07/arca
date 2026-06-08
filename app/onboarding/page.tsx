@@ -4,7 +4,7 @@ import { OnboardingClient } from './client'
 
 export default async function OnboardingPage() {
   const user = await syncUser()
-  if (!user) redirect('/sign-in')
+  if (!user) redirect('/signin')
   if (user.onboardingCompleted) redirect('/dashboard')
   return <OnboardingClient userName={user.name ?? 'there'} />
 }

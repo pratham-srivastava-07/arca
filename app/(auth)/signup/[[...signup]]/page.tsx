@@ -1,8 +1,9 @@
-import { SignIn } from '@clerk/nextjs'
+import { SignUp } from '@clerk/nextjs'
 
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
-    <SignIn
+    <SignUp
+      signInUrl="/signin"
       appearance={{
         elements: {
           rootBox: 'w-full',
@@ -17,10 +18,6 @@ export default function SignInPage() {
           dividerText: 'text-muted-foreground text-xs',
           socialButtonsBlockButton: 'bg-muted border border-border text-foreground hover:bg-muted/80 rounded-md',
           socialButtonsBlockButtonText: 'text-sm font-medium',
-          identityPreviewText: 'text-foreground text-sm',
-          identityPreviewEditButton: 'text-primary',
-          formResendCodeLink: 'text-primary',
-          otpCodeFieldInput: 'bg-muted border border-border text-foreground rounded-md',
         },
         variables: {
           colorPrimary: 'oklch(0.585 0.233 264.531)',

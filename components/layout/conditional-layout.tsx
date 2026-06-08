@@ -5,7 +5,7 @@ import { TopBar } from './top-bar'
 import { CommandPalette } from './command-palette'
 import { PageTransition } from './page-transition'
 
-const NO_CHROME_PREFIXES = ['/sign-in', '/sign-up']
+const NO_CHROME_PREFIXES = ['/signin', '/signup']
 const NO_CHROME_EXACT = ['/', '/onboarding']
 
 function showAppChrome(pathname: string): boolean {

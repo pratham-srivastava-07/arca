@@ -6,7 +6,7 @@ import { DashboardClient } from './client'
 
 export default async function DashboardPage() {
   const user = await syncUser()
-  if (!user) redirect('/sign-in')
+  if (!user) redirect('/signin')
   if (!user.onboardingCompleted) redirect('/onboarding')
 
   const [subscriptions, transactions, monthlySpend] = await Promise.all([

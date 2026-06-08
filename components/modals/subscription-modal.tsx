@@ -140,7 +140,7 @@ export function SubscriptionModal({ open, onClose, editing, onSuccess }: Props) 
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
+            <div className="w-full max-w-2xl bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-border">
                 <h2 className="text-sm font-semibold text-foreground">

@@ -19,19 +19,21 @@ const PAGE_TITLES: Record<string, string> = {
 export function TopBar() {
   const pathname = usePathname()
   const openPalette = useAppStore((s) => s.setCommandPaletteOpen)
-  const title = PAGE_TITLES[pathname] ?? 'Sublytics'
+  const title = PAGE_TITLES[pathname] ?? ''
 
   return (
     <header className="flex items-center justify-between h-14 px-5 shrink-0 border-b border-border bg-background">
-      <motion.h2
-        key={title}
-        initial={{ opacity: 0, x: -6 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.18 }}
-        className="font-semibold text-sm text-foreground"
-      >
-        {title}
-      </motion.h2>
+      {title && (
+        <motion.h2
+          key={title}
+          initial={{ opacity: 0, x: -6 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.18 }}
+          className="font-semibold text-sm text-foreground"
+        >
+          {title}
+        </motion.h2>
+      )}
 
       <div className="flex items-center gap-1.5">
         <button

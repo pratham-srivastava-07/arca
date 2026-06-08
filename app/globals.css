@@ -105,14 +105,11 @@
 }
 
 /* ── Base ── */
-html, body { height: 100%; }
-
 body {
   background: var(--background);
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
 }
 
 /* ── Theme transition – applied only when toggling ── */
@@ -148,18 +145,10 @@ html.theme-transitioning *::after {
 }
 
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--muted)        0%,
-    var(--border)       35%,
-    var(--muted)        50%,
-    var(--muted)       100%
-  );
   background-size: 400% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }
 
-/* Light mode skeleton is a bit lighter */
 :root .skeleton {
   background: linear-gradient(
     90deg,
@@ -169,7 +158,17 @@ html.theme-transitioning *::after {
     oklch(0.93 0 0) 100%
   );
   background-size: 400% 100%;
-  animation: shimmer 2s ease-in-out infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    oklch(0.18 0.005 285.75) 0%,
+    oklch(0.27 0.006 285.75) 35%,
+    oklch(0.18 0.005 285.75) 50%,
+    oklch(0.18 0.005 285.75) 100%
+  );
+  background-size: 400% 100%;
 }
 
 /* ── Card shadow helper ── */

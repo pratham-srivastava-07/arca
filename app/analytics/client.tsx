@@ -213,7 +213,7 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
                 </div>
               </div>
             ) : (
-              <div className="h-36 flex items-center justify-center">
+              <div className="h-[172px] flex items-center justify-center">
                 <p className="text-sm text-muted-foreground">No subscriptions to break down.</p>
               </div>
             )}

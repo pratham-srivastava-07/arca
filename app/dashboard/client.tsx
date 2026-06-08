@@ -1,11 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, type Variants } from 'framer-motion'
-import { DollarSign, CreditCard, Calendar, TrendingUp, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
+import { DollarSign, CreditCard, Calendar, TrendingUp, ArrowUpRight, ArrowDownLeft, Plus } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { MetricCard } from '@/components/ui/metric-card'
 import { GlassCard } from '@/components/ui/glass-card'
 import { ServiceLogo } from '@/components/ui/service-logo'
+import { SubscriptionModal } from '@/components/modals/subscription-modal'
 import { getGreeting, formatCurrency, formatDate, daysUntil } from '@/lib/utils'
 import type { DbSubscription as Subscription } from '@/types'
 
@@ -46,6 +48,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
 
 export function DashboardClient({ user, subscriptions, transactions, monthlySpend }: Props) {
   const [greeting, setGreeting] = useState('')
+  const [addOpen, setAddOpen] = useState(false)
+  const router = useRouter()
   useEffect(() => { setGreeting(getGreeting()) }, [])
 
   const activeSubs = subscriptions.filter((s) => s.status === 'active')
@@ -61,12 +65,30 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-8 space-y-8">
+      <SubscriptionModal
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onSuccess={() => router.refresh()}
+      />
+
       {/* Greeting */}
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <p className="text-sm text-muted-foreground">{greeting}</p>
-        <h1 className="text-2xl font-semibold text-foreground tracking-tight mt-0.5">
-          Good to see you, {firstName}
-        </h1>
+      <motion.div
+        initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+        className="flex items-start justify-between"
+      >
+        <div>
+          <p className="text-sm text-muted-foreground">{greeting}</p>
+          <h1 className="text-2xl font-semibold text-foreground tracking-tight mt-0.5">
+            Good to see you, {firstName}
+          </h1>
+        </div>
+        <button
+          onClick={() => setAddOpen(true)}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+        >
+          <Plus className="w-4 h-4" />
+          Add subscription
+        </button>
       </motion.div>
 
       {/* Metric Cards */}
@@ -165,8 +187,14 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
                 ))}
               </div>
             ) : (
-              <div className="flex items-center justify-center h-24">
+              <div className="flex flex-col items-center justify-center h-24 gap-2">
                 <p className="text-sm text-muted-foreground">No subscriptions yet</p>
+                <button
+                  onClick={() => setAddOpen(true)}
+                  className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add your first one
+                </button>
               </div>
             )}
           </GlassCard>

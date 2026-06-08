@@ -35,7 +35,7 @@ export function Sidebar() {
       className="relative flex flex-col shrink-0 h-screen overflow-hidden border-r border-border bg-background z-40"
     >
       {/* Logo */}
-      <div className="flex items-center h-14 px-3.5 border-b border-border shrink-0">
+      <Link href="/" className="flex items-center h-14 px-3.5 border-b border-border shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary shrink-0">
           <Zap className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={2.5} />
         </div>
@@ -48,11 +48,11 @@ export function Sidebar() {
               transition={{ duration: 0.18 }}
               className="ml-2.5 font-semibold text-sm tracking-tight text-foreground whitespace-nowrap"
             >
-              Sublytics
+              Arca
             </motion.span>
           )}
         </AnimatePresence>
-      </div>
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 py-2.5 px-2 space-y-0.5 overflow-y-auto overflow-x-hidden">
