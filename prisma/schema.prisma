@@ -14,6 +14,11 @@ model User {
   name                String?
   avatar              String?
   onboardingCompleted Boolean        @default(false)
+  plan                Plan     @default(free)
+  planStatus          String?
+  dodoCustomerId      String?  @unique
+  remindersMuted      Boolean  @default(false)
+  currency            String   @default("USD")
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 
@@ -37,6 +42,8 @@ model Subscription {
   nextPaymentDate DateTime
   status          SubscriptionStatus @default(active)
   description     String?
+  reminderEnabled Boolean   @default(false)
+  lastRemindedAt  DateTime?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
 
@@ -110,4 +117,9 @@ enum SubscriptionStatus {
 enum TransactionType {
   debit
   credit
+}
+
+enum Plan {
+  free
+  pro
 }
