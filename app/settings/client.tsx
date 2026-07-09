@@ -93,14 +93,15 @@ function NotificationsSection() {
           { key: 'budgetAlerts' as const, label: 'Budget alerts', desc: 'Alert when you reach 80% of a budget category' },
           { key: 'weeklyReport' as const, label: 'Weekly report', desc: 'Weekly spending summary every Monday' },
         ].map((item) => (
-          <div key={item.key} className="flex items-center justify-between">
-            <div>
+          <div key={item.key} className="flex items-center justify-between gap-4">
+            <div className="min-w-0">
               <p className="text-sm font-medium text-foreground">{item.label}</p>
               <p className="text-xs text-muted-foreground">{item.desc}</p>
             </div>
             <button
               onClick={() => toggle(item.key)}
-              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+              aria-label={`Toggle ${item.label}`}
+              className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
                 prefs[item.key] ? 'bg-primary' : 'bg-muted'
               }`}
             >
@@ -126,19 +127,19 @@ function SecuritySection() {
         <h3 className="text-sm font-semibold text-foreground">Security</h3>
       </div>
       <div className="space-y-3">
-        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border">
-          <div>
+        <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg bg-muted/50 border border-border">
+          <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">Password</p>
             <p className="text-xs text-muted-foreground">Managed by Clerk authentication</p>
           </div>
-          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">Via Clerk</span>
+          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md shrink-0">Via Clerk</span>
         </div>
-        <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/5 border border-green-500/15">
-          <div>
+        <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg bg-green-500/5 border border-green-500/15">
+          <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">Account status</p>
             <p className="text-xs text-muted-foreground">Your account is active and in good standing</p>
           </div>
-          <span className="text-xs text-green-500 bg-green-500/10 border border-green-500/20 px-2 py-1 rounded-full">Active</span>
+          <span className="text-xs text-green-500 bg-green-500/10 border border-green-500/20 px-2 py-1 rounded-full shrink-0">Active</span>
         </div>
       </div>
     </GlassCard>
@@ -188,7 +189,7 @@ function DangerZoneSection() {
 
 export function SettingsClient({ user }: { user: UserData }) {
   return (
-    <div className="max-w-2xl mx-auto px-5 py-8 space-y-5">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-4 sm:space-y-5">
       <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-xl font-semibold text-foreground">Settings</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Manage your account and preferences</p>

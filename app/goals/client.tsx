@@ -44,10 +44,10 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-5 py-8 space-y-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5 sm:space-y-6">
       {/* Summary */}
-      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
-        <div className="flex items-center gap-6">
+      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <div>
             <p className="text-xs text-muted-foreground">Total Saved</p>
             <p className="text-lg font-bold text-foreground tabular-nums">{formatCurrency(totalSaved)}</p>
@@ -88,7 +88,7 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"
         >
           {goals.map((goal) => {
             const progress = getProgressPercent(goal.currentAmount, goal.targetAmount)
@@ -100,28 +100,30 @@ export function GoalsClient({ initialGoals }: { initialGoals: Goal[] }) {
             return (
               <motion.div key={goal.id} variants={cardVariants}>
                 <GlassCard hover className="group">
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
                     <GoalProgressRing progress={progress} size={80} strokeWidth={5}>
                       <div className="text-center">
                         <p className="text-sm font-bold text-foreground leading-none">{Math.round(progress)}%</p>
                       </div>
                     </GoalProgressRing>
                     <div className="flex-1 min-w-0 pt-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
                           {goal.icon && <span className="text-base">{goal.icon}</span>}
-                          <p className="text-sm font-semibold text-foreground">{goal.title}</p>
+                          <p className="text-sm font-semibold text-foreground truncate">{goal.title}</p>
                         </div>
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-0.5 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleEdit(goal)}
-                            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                            aria-label="Edit goal"
+                            className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                           >
                             <Pencil className="w-3 h-3" />
                           </button>
                           <button
                             onClick={() => handleDelete(goal.id)}
-                            className="p-1.5 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
+                            aria-label="Delete goal"
+                            className="p-2 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>

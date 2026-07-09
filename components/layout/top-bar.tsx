@@ -1,6 +1,6 @@
 'use client'
 import { usePathname } from 'next/navigation'
-import { Search, Bell, Command } from 'lucide-react'
+import { Search, Bell, Command, Menu } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { UserButton } from '@clerk/nextjs'
 import { useAppStore } from '@/stores/app-store'
@@ -19,23 +19,33 @@ const PAGE_TITLES: Record<string, string> = {
 export function TopBar() {
   const pathname = usePathname()
   const openPalette = useAppStore((s) => s.setCommandPaletteOpen)
+  const openMobileNav = useAppStore((s) => s.setMobileNavOpen)
   const title = PAGE_TITLES[pathname] ?? ''
 
   return (
-    <header className="flex items-center justify-between h-14 px-5 shrink-0 border-b border-border bg-background">
-      {title && (
-        <motion.h2
-          key={title}
-          initial={{ opacity: 0, x: -6 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.18 }}
-          className="font-semibold text-sm text-foreground"
+    <header className="flex items-center justify-between h-14 px-3 sm:px-5 shrink-0 border-b border-border bg-background">
+      <div className="flex items-center gap-1.5 min-w-0">
+        <button
+          onClick={() => openMobileNav(true)}
+          aria-label="Open menu"
+          className="flex lg:hidden items-center justify-center w-9 h-9 -ml-1 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors duration-100"
         >
-          {title}
-        </motion.h2>
-      )}
+          <Menu className="w-4 h-4" />
+        </button>
+        {title && (
+          <motion.h2
+            key={title}
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.18 }}
+            className="font-semibold text-sm text-foreground truncate"
+          >
+            {title}
+          </motion.h2>
+        )}
+      </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 shrink-0">
         <button
           onClick={() => openPalette(true)}
           className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-muted-foreground bg-muted border border-border hover:text-foreground transition-colors duration-100"

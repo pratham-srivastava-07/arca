@@ -101,9 +101,9 @@ export function OnboardingClient({ userName }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+    <div className="min-h-dvh bg-background flex flex-col items-center justify-center px-4 sm:px-6 pt-24 pb-12">
       {/* Logo */}
-      <div className="absolute top-6 left-6 flex items-center gap-2">
+      <div className="absolute top-5 left-4 sm:top-6 sm:left-6 flex items-center gap-2">
         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary">
           <Zap className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={2.5} />
         </div>
@@ -111,7 +111,7 @@ export function OnboardingClient({ userName }: Props) {
       </div>
 
       {/* Progress */}
-      <div className="absolute top-6 right-6 flex items-center gap-2">
+      <div className="absolute top-6 right-4 sm:right-6 flex items-center gap-2">
         {[...Array(totalSteps)].map((_, i) => (
           <div
             key={i}
@@ -135,10 +135,10 @@ export function OnboardingClient({ userName }: Props) {
               >
                 <Sparkles className="w-8 h-8 text-primary" />
               </motion.div>
-              <h1 className="text-4xl font-bold text-foreground mb-4">
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 Welcome, {firstName}!
               </h1>
-              <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
+              <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-md mx-auto">
                 Let&apos;s set up your Arca account. It takes about 2 minutes and you&apos;ll instantly see your subscription costs.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-left">
@@ -168,11 +168,11 @@ export function OnboardingClient({ userName }: Props) {
           {step === 1 && (
             <motion.div key="subscriptions" {...slide} transition={{ duration: 0.3 }}>
               <div className="mb-8">
-                <h2 className="text-3xl font-bold text-foreground mb-2">What are you subscribed to?</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">What are you subscribed to?</h2>
                 <p className="text-muted-foreground">Select all that apply. You can add more later from the subscriptions page.</p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6">
+              <div className="grid grid-cols-2 min-[480px]:grid-cols-3 sm:grid-cols-4 gap-2.5 mb-6">
                 {POPULAR_SERVICES.map((service) => {
                   const isSelected = selected.has(service.name)
                   return (
@@ -292,7 +292,7 @@ export function OnboardingClient({ userName }: Props) {
               >
                 <Check className="w-10 h-10 text-green-500" />
               </motion.div>
-              <h2 className="text-3xl font-bold text-foreground mb-3">You&apos;re all set!</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">You&apos;re all set!</h2>
               <p className="text-muted-foreground mb-4 max-w-sm mx-auto">
                 {selected.size > 0
                   ? `We'll track your ${selected.size} subscription${selected.size !== 1 ? 's' : ''} and give you instant insights.`

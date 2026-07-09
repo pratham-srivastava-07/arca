@@ -65,6 +65,30 @@ function GridCard({ sub, onEdit, onDelete, onToggleStatus }: GridCardProps) {
             {days === 0 ? 'Due today' : days === 1 ? 'Tomorrow' : `${days}d`}
           </p>
         </div>
+        {/* Touch devices: always-visible action row */}
+        <div className="flex sm:hidden items-center gap-1.5 mt-3 pt-3 border-t border-border/40">
+          <button
+            onClick={() => onEdit(sub)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md bg-muted text-foreground text-xs font-medium transition-colors"
+          >
+            <Pencil className="w-3 h-3" />Edit
+          </button>
+          <button
+            onClick={() => onToggleStatus(sub)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md bg-muted text-muted-foreground text-xs font-medium transition-colors"
+          >
+            {sub.status === 'active'
+              ? <><Pause className="w-3 h-3" />Pause</>
+              : <><Play className="w-3 h-3" />Resume</>}
+          </button>
+          <button
+            onClick={() => onDelete(sub.id)}
+            aria-label="Delete subscription"
+            className="flex items-center justify-center w-9 h-9 rounded-md bg-red-500/10 text-red-500 transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
         <AnimatePresence>
           {hovered && (
             <motion.div
@@ -72,7 +96,7 @@ function GridCard({ sub, onEdit, onDelete, onToggleStatus }: GridCardProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.12 }}
-              className="absolute inset-0 bg-card/92 backdrop-blur-sm flex items-center justify-center gap-2 rounded-xl"
+              className="absolute inset-0 bg-card/92 backdrop-blur-sm hidden sm:flex items-center justify-center gap-2 rounded-xl"
             >
               <button
                 onClick={() => onEdit(sub)}
@@ -118,26 +142,28 @@ function ListRow({ sub, index, onEdit, onDelete, onToggleStatus }: ListRowProps)
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.25, delay: index * 0.04 }}
-      className="flex items-center gap-4 py-3 border-b border-border/40 last:border-0 group"
+      className="flex items-center gap-2.5 sm:gap-4 py-3 border-b border-border/40 last:border-0 group"
     >
       <ServiceLogo name={sub.name} size={32} />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground">{sub.name}</p>
-        <p className="text-xs text-muted-foreground">{sub.category}</p>
+        <p className="text-sm font-medium text-foreground truncate">{sub.name}</p>
+        <p className="text-xs text-muted-foreground truncate">{sub.category}</p>
       </div>
-      <StatusBadge status={sub.status} />
+      <div className="hidden md:block">
+        <StatusBadge status={sub.status} />
+      </div>
       <p className={cn('text-xs hidden sm:block w-20 text-right', days <= 3 ? 'text-amber-500' : 'text-muted-foreground')}>
         {days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : `${days}d left`}
       </p>
-      <p className="text-sm font-semibold text-foreground tabular-nums w-16 text-right">{formatCurrency(sub.amount)}</p>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button onClick={() => onEdit(sub)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+      <p className="text-sm font-semibold text-foreground tabular-nums w-16 text-right shrink-0">{formatCurrency(sub.amount)}</p>
+      <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+        <button onClick={() => onEdit(sub)} aria-label="Edit" className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
           <Pencil className="w-3 h-3" />
         </button>
-        <button onClick={() => onToggleStatus(sub)} className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+        <button onClick={() => onToggleStatus(sub)} aria-label={sub.status === 'active' ? 'Pause' : 'Resume'} className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
           {sub.status === 'active' ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
         </button>
-        <button onClick={() => onDelete(sub.id)} className="p-1.5 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors">
+        <button onClick={() => onDelete(sub.id)} aria-label="Delete" className="p-2 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors">
           <Trash2 className="w-3 h-3" />
         </button>
       </div>
@@ -185,8 +211,8 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-5 py-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5 sm:space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
           {active.length} active &middot; <span className="text-foreground font-medium">{formatCurrency(monthlyTotal)}/mo</span>
         </p>
@@ -233,7 +259,7 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3"
+          className="grid grid-cols-1 min-[440px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3"
         >
           {subs.map((sub) => (
             <GridCard
@@ -247,13 +273,13 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
         </motion.div>
       ) : (
         <GlassCard>
-          <div className="flex items-center gap-4 pb-2.5 border-b border-border text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          <div className="flex items-center gap-2.5 sm:gap-4 pb-2.5 border-b border-border text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
             <div className="w-8" />
             <div className="flex-1">Service</div>
-            <div>Status</div>
+            <div className="hidden md:block">Status</div>
             <div className="hidden sm:block w-20 text-right">Renewal</div>
             <div className="w-16 text-right">Amount</div>
-            <div className="w-16" />
+            <div className="w-[5.5rem] sm:w-24" />
           </div>
           {subs.map((sub, i) => (
             <ListRow

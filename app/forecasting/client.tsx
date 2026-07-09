@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { TrendingUp } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { GlassCard } from '@/components/ui/glass-card'
 import { formatCurrency } from '@/lib/utils'
@@ -70,9 +71,9 @@ export function ForecastingClient({ subscriptions }: { subscriptions: Subscripti
     scenarios.some((sc) => sc.subscriptionId === sub.id && sc.type === type)
 
   return (
-    <div className="max-w-5xl mx-auto px-5 py-8 space-y-5">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-4 sm:space-y-5">
       {/* Summary */}
-      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-3 gap-3">
+      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-2.5 sm:gap-3">
         {[
           { label: 'Base Monthly', value: baseMonthly },
           { label: 'Projected Monthly', value: projectedMonthly, highlight: scenarioDelta !== 0 },
@@ -104,7 +105,7 @@ export function ForecastingClient({ subscriptions }: { subscriptions: Subscripti
                 const increase20 = monthlyAmount * 0.2
                 const cancelDelta = -monthlyAmount
                 return (
-                  <div key={sub.id} className="flex items-center gap-1.5">
+                  <div key={sub.id} className="flex flex-wrap items-center gap-1.5 max-w-full">
                     <button
                       onClick={() => toggleScenario(sub, 'price_change', +increase20)}
                       className={cn(
@@ -151,7 +152,7 @@ export function ForecastingClient({ subscriptions }: { subscriptions: Subscripti
       {/* Forecast chart */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}>
         <GlassCard>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h3 className="text-sm font-semibold text-foreground">12-Month Forecast</h3>
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
@@ -219,8 +220,10 @@ export function ForecastingClient({ subscriptions }: { subscriptions: Subscripti
 
       {activeSubs.length === 0 && (
         <GlassCard>
-          <div className="py-12 text-center">
-            <p className="text-4xl mb-3">📈</p>
+          <div className="py-12 flex flex-col items-center text-center">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 mb-3">
+              <TrendingUp className="w-5 h-5 text-primary" />
+            </div>
             <p className="text-sm font-semibold text-foreground mb-1">No subscriptions to forecast</p>
             <p className="text-xs text-muted-foreground">Add subscriptions to see your spending forecast.</p>
           </div>

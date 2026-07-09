@@ -34,9 +34,9 @@ export function MetricCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.06, ease: 'easeOut' }}
-      className="rounded-xl bg-card border border-border p-5"
+      className="rounded-xl bg-card border border-border p-4 sm:p-5"
     >
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-3 sm:mb-4">
         <div className="flex items-center justify-center w-8 h-8 rounded-md bg-muted text-muted-foreground">
           {icon}
         </div>
@@ -55,7 +55,7 @@ export function MetricCard({
       <p className="text-xs text-muted-foreground font-medium mb-1 uppercase tracking-wide">
         {label}
       </p>
-      <p className="text-2xl font-semibold tracking-tight text-foreground">
+      <p className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground tabular-nums">
         <AnimatedCounter value={value} prefix={prefix} suffix={suffix} decimals={decimals} />
       </p>
       {changeLabel && (
