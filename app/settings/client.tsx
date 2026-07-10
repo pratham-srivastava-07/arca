@@ -3,13 +3,14 @@ import { useState, useTransition } from 'react'
 import { motion } from 'framer-motion'
 import { User, Bell, Shield, Trash2, Loader2, Check } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
-import { updateUserProfile } from '@/actions/user'
+import { updateUserProfile, setRemindersMuted } from '@/actions/user'
 
 interface UserData {
   id: string
   name: string
   email: string
   createdAt: Date
+  remindersMuted: boolean
 }
 
 function ProfileSection({ user }: { user: UserData }) {
@@ -71,15 +72,21 @@ function ProfileSection({ user }: { user: UserData }) {
   )
 }
 
-function NotificationsSection() {
+function NotificationsSection({ remindersMuted }: { remindersMuted: boolean }) {
   const [prefs, setPrefs] = useState({
-    renewalReminders: true,
+    renewalReminders: !remindersMuted,
     budgetAlerts: true,
     weeklyReport: false,
   })
+  const [, startTransition] = useTransition()
 
-  const toggle = (key: keyof typeof prefs) =>
+  const toggle = (key: keyof typeof prefs) => {
+    if (key === 'renewalReminders') {
+      // Pre-flip value of the toggle IS the new muted value (on → muting).
+      startTransition(() => setRemindersMuted(prefs.renewalReminders))
+    }
     setPrefs((p) => ({ ...p, [key]: !p[key] }))
+  }
 
   return (
     <GlassCard>
@@ -90,8 +97,8 @@ function NotificationsSection() {
       <div className="space-y-4">
         {[
           { key: 'renewalReminders' as const, label: 'Renewal reminders', desc: 'Get notified 3 days before a subscription renews' },
-          { key: 'budgetAlerts' as const, label: 'Budget alerts', desc: 'Alert when you reach 80% of a budget category' },
-          { key: 'weeklyReport' as const, label: 'Weekly report', desc: 'Weekly spending summary every Monday' },
+          { key: 'budgetAlerts' as const, label: 'Budget alerts', desc: 'Alert when you reach 80% of a budget category (coming soon)' },
+          { key: 'weeklyReport' as const, label: 'Weekly report', desc: 'Weekly spending summary every Monday (coming soon)' },
         ].map((item) => (
           <div key={item.key} className="flex items-center justify-between gap-4">
             <div className="min-w-0">
@@ -200,7 +207,7 @@ export function SettingsClient({ user }: { user: UserData }) {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <NotificationsSection />
+        <NotificationsSection remindersMuted={user.remindersMuted} />
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}>

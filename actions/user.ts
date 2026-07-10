@@ -44,6 +44,16 @@ export async function completeOnboarding() {
   revalidatePath('/dashboard')
 }
 
+export async function setRemindersMuted(muted: boolean) {
+  const { userId } = await auth()
+  if (!userId) throw new Error('Unauthorized')
+  await prisma.user.update({
+    where: { clerkId: userId },
+    data: { remindersMuted: muted },
+  })
+  revalidatePath('/settings')
+}
+
 export async function updateUserProfile(data: { name?: string; email?: string }) {
   const { userId } = await auth()
   if (!userId) throw new Error('Unauthorized')

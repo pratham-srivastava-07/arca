@@ -2,12 +2,12 @@
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
-import { LayoutGrid, List, Plus, Pencil, Pause, Play, Trash2 } from 'lucide-react'
+import { LayoutGrid, List, Plus, Pencil, Pause, Play, Trash2, Bell, BellOff } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { ServiceLogo } from '@/components/ui/service-logo'
 import { EmptyState, NoSubscriptionsIllustration } from '@/components/ui/empty-state'
 import { SubscriptionModal } from '@/components/modals/subscription-modal'
-import { deleteSubscription, updateSubscription } from '@/actions/subscriptions'
+import { deleteSubscription, updateSubscription, toggleReminder } from '@/actions/subscriptions'
 import { useAppStore } from '@/stores/app-store'
 import { formatCurrency, daysUntil } from '@/lib/utils'
 import { cn } from '@/lib/utils'
@@ -41,9 +41,10 @@ interface GridCardProps {
   onEdit: (sub: Subscription) => void
   onDelete: (id: string) => void
   onToggleStatus: (sub: Subscription) => void
+  onToggleReminder: (sub: Subscription) => void
 }
 
-function GridCard({ sub, onEdit, onDelete, onToggleStatus }: GridCardProps) {
+function GridCard({ sub, onEdit, onDelete, onToggleStatus, onToggleReminder }: GridCardProps) {
   const [hovered, setHovered] = useState(false)
   const days = daysUntil(sub.nextPaymentDate.toISOString().split('T')[0])
 
@@ -82,6 +83,16 @@ function GridCard({ sub, onEdit, onDelete, onToggleStatus }: GridCardProps) {
               : <><Play className="w-3 h-3" />Resume</>}
           </button>
           <button
+            onClick={() => onToggleReminder(sub)}
+            aria-label={sub.reminderEnabled ? 'Disable renewal reminder' : 'Enable renewal reminder'}
+            className={cn(
+              'flex items-center justify-center w-9 h-9 rounded-md bg-muted transition-colors',
+              sub.reminderEnabled ? 'text-primary' : 'text-muted-foreground'
+            )}
+          >
+            {sub.reminderEnabled ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
+          </button>
+          <button
             onClick={() => onDelete(sub.id)}
             aria-label="Delete subscription"
             className="flex items-center justify-center w-9 h-9 rounded-md bg-red-500/10 text-red-500 transition-colors"
@@ -113,6 +124,17 @@ function GridCard({ sub, onEdit, onDelete, onToggleStatus }: GridCardProps) {
                   : <><Play className="w-3 h-3" />Resume</>}
               </button>
               <button
+                onClick={() => onToggleReminder(sub)}
+                aria-label={sub.reminderEnabled ? 'Disable renewal reminder' : 'Enable renewal reminder'}
+                title={sub.reminderEnabled ? 'Reminder on' : 'Remind me 3 days before renewal'}
+                className={cn(
+                  'p-1.5 rounded-md bg-muted hover:bg-muted/70 transition-colors',
+                  sub.reminderEnabled ? 'text-primary' : 'text-muted-foreground'
+                )}
+              >
+                {sub.reminderEnabled ? <Bell className="w-3 h-3" /> : <BellOff className="w-3 h-3" />}
+              </button>
+              <button
                 onClick={() => onDelete(sub.id)}
                 className="p-1.5 rounded-md bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-colors"
               >
@@ -132,9 +154,10 @@ interface ListRowProps {
   onEdit: (sub: Subscription) => void
   onDelete: (id: string) => void
   onToggleStatus: (sub: Subscription) => void
+  onToggleReminder: (sub: Subscription) => void
 }
 
-function ListRow({ sub, index, onEdit, onDelete, onToggleStatus }: ListRowProps) {
+function ListRow({ sub, index, onEdit, onDelete, onToggleStatus, onToggleReminder }: ListRowProps) {
   const days = daysUntil(sub.nextPaymentDate.toISOString().split('T')[0])
 
   return (
@@ -163,6 +186,17 @@ function ListRow({ sub, index, onEdit, onDelete, onToggleStatus }: ListRowProps)
         <button onClick={() => onToggleStatus(sub)} aria-label={sub.status === 'active' ? 'Pause' : 'Resume'} className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
           {sub.status === 'active' ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
         </button>
+        <button
+          onClick={() => onToggleReminder(sub)}
+          aria-label={sub.reminderEnabled ? 'Disable renewal reminder' : 'Enable renewal reminder'}
+          title={sub.reminderEnabled ? 'Reminder on' : 'Remind me 3 days before renewal'}
+          className={cn(
+            'p-2 rounded-md hover:bg-muted transition-colors',
+            sub.reminderEnabled ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          {sub.reminderEnabled ? <Bell className="w-3 h-3" /> : <BellOff className="w-3 h-3" />}
+        </button>
         <button onClick={() => onDelete(sub.id)} aria-label="Delete" className="p-2 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors">
           <Trash2 className="w-3 h-3" />
         </button>
@@ -178,6 +212,7 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
   const [subs, setSubs] = useState(initialSubscriptions)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingSub, setEditingSub] = useState<Subscription | null>(null)
+  const [limitMsg, setLimitMsg] = useState<string | null>(null)
   const [, startTransition] = useTransition()
 
   useEffect(() => { setSubs(initialSubscriptions) }, [initialSubscriptions])
@@ -197,6 +232,18 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
     setSubs((prev) => prev.map((s) => s.id === sub.id ? { ...s, status: newStatus } : s))
     startTransition(async () => {
       await updateSubscription(sub.id, { status: newStatus })
+    })
+  }
+
+  const handleToggleReminder = (sub: Subscription) => {
+    const enabled = !sub.reminderEnabled
+    setSubs((prev) => prev.map((s) => (s.id === sub.id ? { ...s, reminderEnabled: enabled } : s)))
+    startTransition(async () => {
+      const result = await toggleReminder(sub.id, enabled)
+      if (!result.ok) {
+        setSubs((prev) => prev.map((s) => (s.id === sub.id ? { ...s, reminderEnabled: !enabled } : s)))
+        setLimitMsg(`Free plan includes reminders on ${result.limit} subscriptions. Upgrade to Pro for all of them.`)
+      }
     })
   }
 
@@ -240,6 +287,25 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
         </div>
       </div>
 
+      <AnimatePresence>
+        {limitMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -6, height: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="overflow-hidden"
+          >
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5 text-sm text-foreground">
+              <span>{limitMsg}</span>
+              <button onClick={() => setLimitMsg(null)} className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0">
+                Dismiss
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {subs.length === 0 ? (
         <EmptyState
           illustration={<NoSubscriptionsIllustration />}
@@ -268,6 +334,7 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
               onEdit={handleEdit}
               onDelete={handleDelete}
               onToggleStatus={handleToggleStatus}
+              onToggleReminder={handleToggleReminder}
             />
           ))}
         </motion.div>
@@ -289,6 +356,7 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
               onEdit={handleEdit}
               onDelete={handleDelete}
               onToggleStatus={handleToggleStatus}
+              onToggleReminder={handleToggleReminder}
             />
           ))}
         </GlassCard>
