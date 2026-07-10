@@ -2,6 +2,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import { FREE_LIMITS, limitReached, type LimitResult } from '@/lib/limits'
 import { z } from 'zod'
 
 const SubscriptionSchema = z.object({
@@ -72,4 +73,19 @@ export async function deleteSubscription(id: string) {
   await prisma.subscription.delete({ where: { id } })
   revalidatePath('/subscriptions')
   revalidatePath('/')
+}
+
+export async function toggleReminder(id: string, enabled: boolean): Promise<LimitResult> {
+  const user = await getUserRecord()
+  const sub = await prisma.subscription.findFirst({ where: { id, userId: user.id } })
+  if (!sub) throw new Error('Subscription not found')
+  if (enabled && user.plan === 'free') {
+    const enabledCount = await prisma.subscription.count({
+      where: { userId: user.id, reminderEnabled: true, NOT: { id } },
+    })
+    if (enabledCount >= FREE_LIMITS.reminders) return limitReached('reminders')
+  }
+  await prisma.subscription.update({ where: { id }, data: { reminderEnabled: enabled } })
+  revalidatePath('/subscriptions')
+  return { ok: true }
 }
