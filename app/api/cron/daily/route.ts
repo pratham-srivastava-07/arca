@@ -7,6 +7,10 @@ import { sendRenewalReminder } from '@/lib/email'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
+  // Fail closed if the secret is missing — otherwise the check would accept the literal "Bearer undefined"
+  if (!process.env.CRON_SECRET) {
+    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 503 })
+  }
   if (request.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
