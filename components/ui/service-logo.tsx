@@ -14,6 +14,9 @@ const SERVICE_COLORS: Record<string, { bg: string; color: string }> = {
   'Disney+': { bg: '#0d2481', color: '#fff' },
   Audible: { bg: '#F8991C', color: '#000' },
   'Canva Pro': { bg: '#7d2ae8', color: '#fff' },
+  'Amazon Prime': { bg: '#00A8E1', color: '#fff' },
+  Dropbox: { bg: '#0061FF', color: '#fff' },
+  Crunchyroll: { bg: '#F47521', color: '#fff' },
 }
 
 interface ServiceLogoProps {

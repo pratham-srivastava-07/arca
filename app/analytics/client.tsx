@@ -6,7 +6,6 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts'
 import { GlassCard } from '@/components/ui/glass-card'
-import { HEATMAP_DATA } from '@/lib/data'
 import { formatCurrency, cn } from '@/lib/utils'
 import type { DbSubscription as Subscription } from '@/types'
 
@@ -82,9 +81,10 @@ function HeatmapCell({ value, max }: { value: number; max: number }) {
 interface Props {
   subscriptions: Subscription[]
   monthlySpend: { month: string; amount: number }[]
+  dailySpend: { date: string; amount: number }[]
 }
 
-export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
+export function AnalyticsClient({ subscriptions, monthlySpend, dailySpend }: Props) {
   const [range, setRange] = useState<TimeRange>('month')
 
   const chartData = useMemo(() => {
@@ -117,10 +117,10 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
     }))
   }, [subscriptions.length, monthlySpend])
 
-  const maxHeatmap = Math.max(...HEATMAP_DATA.map((d) => d.amount))
+  const maxHeatmap = dailySpend.length ? Math.max(...dailySpend.map((d) => d.amount)) : 0
   const weeksData: number[][] = []
-  for (let i = 0; i < HEATMAP_DATA.length; i += 7) {
-    weeksData.push(HEATMAP_DATA.slice(i, i + 7).map((d) => d.amount))
+  for (let i = 0; i < dailySpend.length; i += 7) {
+    weeksData.push(dailySpend.slice(i, i + 7).map((d) => d.amount))
   }
 
   const hasData = monthlySpend.length > 0
@@ -266,7 +266,10 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
         <GlassCard>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-foreground">Spending Heatmap</h3>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Spending Heatmap</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Last 12 weeks</p>
+            </div>
             <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <span>Less</span>
               {[0, 0.25, 0.5, 0.75, 1].map((v, i) => (

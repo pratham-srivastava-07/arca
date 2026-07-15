@@ -6,8 +6,8 @@ import { ServiceLogo } from '@/components/ui/service-logo'
  * duplicated track for a seamless loop, paused under reduced motion.
  */
 
-const ROW_A = ['Netflix', 'Spotify', 'YouTube Premium', 'ChatGPT Plus', 'Notion', 'iCloud+', 'Xbox Game Pass']
-const ROW_B = ['AWS', 'GitHub Pro', 'Figma', 'Adobe CC', 'Disney+', 'Audible', 'Canva Pro', 'Hulu']
+const ROW_A = ['Netflix', 'Spotify', 'YouTube Premium', 'ChatGPT Plus', 'Notion', 'iCloud+', 'Xbox Game Pass', 'Amazon Prime', 'Dropbox']
+const ROW_B = ['AWS', 'GitHub Pro', 'Figma', 'Adobe CC', 'Disney+', 'Audible', 'Canva Pro', 'Hulu', 'Crunchyroll']
 
 function MarqueeRow({ names, reverse }: { names: string[]; reverse?: boolean }) {
   const track = [...names, ...names]

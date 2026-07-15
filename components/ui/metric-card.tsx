@@ -14,6 +14,8 @@ interface MetricCardProps {
   change?: number
   changeLabel?: string
   index?: number
+  /** For metrics like spend where a decrease is the good direction */
+  goodWhenDown?: boolean
 }
 
 export function MetricCard({
@@ -26,8 +28,10 @@ export function MetricCard({
   change,
   changeLabel,
   index = 0,
+  goodWhenDown = false,
 }: MetricCardProps) {
   const isPositive = change !== undefined ? change >= 0 : true
+  const isGood = goodWhenDown ? !isPositive : isPositive
 
   return (
     <motion.div
@@ -44,7 +48,7 @@ export function MetricCard({
           <span
             className={cn(
               'text-xs font-medium flex items-center gap-0.5',
-              isPositive ? 'text-emerald-500' : 'text-red-500'
+              isGood ? 'text-emerald-500' : 'text-red-500'
             )}
           >
             {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
