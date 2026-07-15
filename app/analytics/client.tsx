@@ -126,9 +126,9 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
   const hasData = monthlySpend.length > 0
 
   return (
-    <div className="max-w-5xl mx-auto px-5 py-8 space-y-5">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-4 sm:space-y-5">
       {/* Range selector + summary */}
-      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
+      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-6">
           <div>
             <p className="text-xs text-muted-foreground">Total</p>
@@ -139,12 +139,12 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
             <p className="text-lg font-bold text-foreground tabular-nums">{formatCurrency(avg)}</p>
           </div>
         </div>
-        <div className="flex items-center rounded-md border border-border overflow-hidden">
+        <div className="flex items-center self-stretch sm:self-auto rounded-md border border-border overflow-hidden">
           {RANGES.map((r) => (
             <button
               key={r.value}
               onClick={() => setRange(r.value)}
-              className={cn('px-3 py-1.5 text-xs font-medium transition-colors border-r border-border last:border-0',
+              className={cn('flex-1 sm:flex-none px-3 sm:px-3.5 py-2 sm:py-1.5 text-xs font-medium transition-colors border-r border-border last:border-0',
                 range === r.value ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -189,7 +189,7 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
           <GlassCard>
             <h3 className="text-sm font-semibold text-foreground mb-4">Category Breakdown</h3>
             {categorySpend.length > 0 ? (
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col min-[480px]:flex-row items-center gap-4">
                 <div className="w-36 h-36 shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -202,7 +202,7 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="space-y-2 flex-1 min-w-0">
+                <div className="space-y-2 w-full min-[480px]:w-auto min-[480px]:flex-1 min-w-0">
                   {categorySpend.map((cat, i) => (
                     <div key={cat.category} className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: INDIGO_SHADES[i % INDIGO_SHADES.length] }} />

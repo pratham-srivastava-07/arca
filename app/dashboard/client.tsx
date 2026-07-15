@@ -64,7 +64,7 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
   const firstName = user.name.split(' ')[0]
 
   return (
-    <div className="max-w-5xl mx-auto px-5 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       <SubscriptionModal
         open={addOpen}
         onClose={() => setAddOpen(false)}
@@ -74,11 +74,11 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
       {/* Greeting */}
       <motion.div
         initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-        className="flex items-start justify-between"
+        className="flex flex-wrap items-start justify-between gap-3"
       >
-        <div>
+        <div className="min-w-0">
           <p className="text-sm text-muted-foreground">{greeting}</p>
-          <h1 className="text-2xl font-semibold text-foreground tracking-tight mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-semibold text-foreground tracking-tight mt-0.5">
             Good to see you, {firstName}
           </h1>
         </div>
@@ -96,7 +96,7 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
         variants={stagger.container}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-2 xl:grid-cols-4 gap-3"
+        className="grid grid-cols-2 xl:grid-cols-4 gap-2.5 sm:gap-3"
       >
         <motion.div variants={stagger.item}>
           <MetricCard label="Monthly Spend" value={monthlyTotal} prefix="$" decimals={2} change={+4.2} icon={<DollarSign className="w-4 h-4" />} />

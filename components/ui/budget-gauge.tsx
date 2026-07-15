@@ -28,10 +28,10 @@ export function BudgetGauge({ category, icon, spent, limit, index = 0 }: BudgetG
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.35, delay: index * 0.06, ease: 'easeOut' }}
     >
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 mb-1.5">
+        <div className="flex items-center gap-2 min-w-0">
           <span className="text-sm">{icon}</span>
-          <span className="text-sm font-medium text-foreground">{category}</span>
+          <span className="text-sm font-medium text-foreground truncate">{category}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">

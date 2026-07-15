@@ -57,9 +57,9 @@ export function BudgetClient({ initialBudgets }: { initialBudgets: Budget[] }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-5 py-8 space-y-5">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-4 sm:space-y-5">
       {/* Overview row */}
-      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-3 gap-3">
+      <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 min-[480px]:grid-cols-3 gap-2.5 sm:gap-3">
         <GlassCard padding="sm">
           <p className="text-xs text-muted-foreground">Total Budget</p>
           <p className="text-xl font-bold text-foreground tabular-nums mt-0.5">{formatCurrency(totalLimit)}</p>
@@ -94,7 +94,7 @@ export function BudgetClient({ initialBudgets }: { initialBudgets: Budget[] }) {
       ) : (
         <>
           {/* Health score ring + insights */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 sm:gap-4">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
               <GlassCard className="flex flex-col items-center justify-center py-6">
                 <div className="relative w-28 h-28">

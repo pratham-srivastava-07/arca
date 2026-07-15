@@ -64,6 +64,7 @@ export interface DbSubscription {
   nextPaymentDate: Date
   status: string
   description: string | null
+  reminderEnabled: boolean
   createdAt: Date
   updatedAt: Date
 }

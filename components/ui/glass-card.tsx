@@ -7,7 +7,7 @@ interface GlassCardProps extends HTMLMotionProps<'div'> {
   padding?: 'none' | 'sm' | 'md' | 'lg'
 }
 
-const paddingMap = { none: '', sm: 'p-4', md: 'p-5', lg: 'p-6' }
+const paddingMap = { none: '', sm: 'p-4', md: 'p-4 sm:p-5', lg: 'p-4 sm:p-6' }
 
 export function GlassCard({
   children,

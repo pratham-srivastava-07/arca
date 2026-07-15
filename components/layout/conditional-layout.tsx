@@ -1,6 +1,6 @@
 'use client'
 import { usePathname } from 'next/navigation'
-import { Sidebar } from './sidebar'
+import { Sidebar, MobileSidebar } from './sidebar'
 import { TopBar } from './top-bar'
 import { CommandPalette } from './command-palette'
 import { PageTransition } from './page-transition'
@@ -21,8 +21,9 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   if (!hasChrome) return <>{children}</>
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+    <div className="flex h-dvh overflow-hidden bg-background text-foreground">
       <Sidebar />
+      <MobileSidebar />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <TopBar />
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
