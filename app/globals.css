@@ -8,6 +8,7 @@
   --font-sans: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
   --font-heading: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-geist-sans), system-ui, sans-serif;
 }
 
 /* ── Light mode – premium off-white (Stripe/Vercel-inspired) ── */
@@ -174,3 +175,23 @@ html.theme-transitioning *::after {
 /* ── Card shadow helper ── */
 .card-shadow { box-shadow: var(--shadow-card); }
 .popover-shadow { box-shadow: var(--shadow-popover); }
+
+/* ── Landing marquee ── */
+@keyframes marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-scroll 44s linear infinite;
+}
+.marquee-track-reverse {
+  animation: marquee-scroll 52s linear infinite reverse;
+}
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .marquee-track-reverse {
+    animation: none;
+  }
+}
