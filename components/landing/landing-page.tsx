@@ -136,6 +136,8 @@ export function LandingPage({ isSignedIn }: { isSignedIn: boolean }) {
       <Nav isSignedIn={isSignedIn} />
       <main>
         <HorizonHero />
+        {/* Dissolve the hero's valley mist into the page background. */}
+        <div aria-hidden className="h-28 bg-gradient-to-b from-[#e9eefb] to-[#fdfdfe]" />
         <LogoMarquee />
         <ProductFrame />
         <Features />

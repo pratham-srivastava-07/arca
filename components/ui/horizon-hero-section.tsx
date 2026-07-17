@@ -180,6 +180,9 @@ export function HorizonHero() {
           className="absolute inset-0 bg-gradient-to-b from-[#e8f1ff] via-[#f4f8ff] to-[#fff3e0] opacity-0"
         />
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+        {/* Valley mist: dawn haze pooling below the ridgelines keeps the
+            lower frame light and grounds the text. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[46%] bg-gradient-to-t from-[#e9eefb] via-[#e9eefb]/55 to-transparent" />
 
         {SECTIONS.map((section, i) => (
           <div

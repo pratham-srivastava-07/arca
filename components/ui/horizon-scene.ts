@@ -5,6 +5,11 @@ import * as THREE from 'three'
  * dynamic import() after hydration — three.js stays out of the landing
  * page's critical bundle. The hero component drives it through the returned
  * controller.
+ *
+ * The scene is a dawn flight down a mountain valley: real displaced 3D
+ * terrain (ridged fractal noise, flat-shaded facets, snow above the tree
+ * line) backlit by the rising sun, with exponential fog carrying far peaks
+ * into the sky gradient.
  */
 
 function mulberry32(seed: number) {
@@ -18,11 +23,54 @@ function mulberry32(seed: number) {
   }
 }
 
+function makePerlin(rng: () => number) {
+  const p = new Uint8Array(512)
+  const src = Array.from({ length: 256 }, (_, i) => i)
+  for (let i = 255; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1))
+    ;[src[i], src[j]] = [src[j], src[i]]
+  }
+  for (let i = 0; i < 512; i++) p[i] = src[i & 255]
+  const fade = (t: number) => t * t * t * (t * (t * 6 - 15) + 10)
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+  const grad = (h: number, x: number, y: number) => {
+    const g = h & 7
+    const u = g < 4 ? x : y
+    const v = g < 4 ? y : x
+    return (g & 1 ? -u : u) + (g & 2 ? -2 * v : 2 * v)
+  }
+  return (x: number, y: number) => {
+    const X = Math.floor(x) & 255
+    const Y = Math.floor(y) & 255
+    x -= Math.floor(x)
+    y -= Math.floor(y)
+    const u = fade(x)
+    const v = fade(y)
+    const a = p[p[X] + Y]
+    const b = p[p[X + 1] + Y]
+    const c = p[p[X] + Y + 1]
+    const d = p[p[X + 1] + Y + 1]
+    return (
+      lerp(
+        lerp(grad(a, x, y), grad(b, x - 1, y), u),
+        lerp(grad(c, x, y - 1), grad(d, x - 1, y - 1), u),
+        v
+      ) / 2.2
+    )
+  }
+}
+
+const smoothstep = (edge0: number, edge1: number, t: number) => {
+  const k = Math.min(1, Math.max(0, (t - edge0) / (edge1 - edge0)))
+  return k * k * (3 - 2 * k)
+}
+
 const CAMERA_PATH = [
-  { y: 24, z: 110 },
-  { y: 32, z: 20 },
-  { y: 42, z: -70 },
+  { y: 26, z: 120 },
+  { y: 34, z: 0 },
+  { y: 46, z: -130 },
 ]
+const LOOK_AT = new THREE.Vector3(0, 52, -480)
 
 function buildStars(scene: THREE.Scene, rng: () => number) {
   const layers: { points: THREE.Points; material: THREE.ShaderMaterial }[] = []
@@ -36,7 +84,7 @@ function buildStars(scene: THREE.Scene, rng: () => number) {
       // Bias stars to the upper hemisphere so they live in the sky.
       const phi = Math.acos(1 - rng() * 0.9)
       positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
-      positions[i * 3 + 1] = Math.abs(radius * Math.cos(phi)) + 20
+      positions[i * 3 + 1] = Math.abs(radius * Math.cos(phi)) + 40
       positions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta) - 200
       sizes[i] = 0.6 + rng() * (layer === 0 ? 1.6 : 2.4)
     }
@@ -76,41 +124,85 @@ function buildStars(scene: THREE.Scene, rng: () => number) {
   return layers
 }
 
-function buildRidges(scene: THREE.Scene, rng: () => number) {
-  // Far ridges are palest (atmospheric perspective); near ridge is deepest.
-  const layers = [
-    { z: -210, height: 100, color: 0xbfcbec, opacity: 0.55 },
-    { z: -150, height: 92, color: 0xa4b3e2, opacity: 0.7 },
-    { z: -95, height: 80, color: 0x8495d1, opacity: 0.85 },
-    { z: -45, height: 62, color: 0x5b6cb4, opacity: 1 },
-  ]
-  const meshes: THREE.Mesh[] = []
-  layers.forEach((layer, index) => {
-    const points: THREE.Vector2[] = []
-    const segments = 48
-    for (let i = 0; i <= segments; i++) {
-      const x = (i / segments - 0.5) * 1400
-      const y =
-        Math.sin(i * 0.35 + index * 2.1) * layer.height * 0.5 +
-        Math.sin(i * 0.13 + index) * layer.height * 0.35 +
-        rng() * layer.height * 0.18 -
-        58
-      points.push(new THREE.Vector2(x, y))
+function buildTerrain(scene: THREE.Scene, rng: () => number, isMobile: boolean) {
+  const perlin = makePerlin(rng)
+  // Ridged fBm: folding |noise| makes sharp ridgelines instead of round blobs.
+  const ridged = (x: number, y: number) => {
+    let sum = 0
+    let amp = 0.52
+    let freq = 1
+    for (let o = 0; o < 5; o++) {
+      const n = 1 - Math.abs(perlin(x * freq, y * freq))
+      sum += n * n * amp
+      amp *= 0.5
+      freq *= 2.03
     }
-    points.push(new THREE.Vector2(1400, -400), new THREE.Vector2(-1400, -400))
-    const geometry = new THREE.ShapeGeometry(new THREE.Shape(points))
-    const material = new THREE.MeshBasicMaterial({
-      color: layer.color,
-      transparent: true,
-      opacity: layer.opacity,
-    })
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.z = layer.z
-    mesh.userData = { parallax: 1 + index * 0.6 }
-    scene.add(mesh)
-    meshes.push(mesh)
+    return sum
+  }
+
+  const width = 1900
+  const depth = 950
+  const segX = isMobile ? 130 : 210
+  const segZ = isMobile ? 62 : 100
+  const geometry = new THREE.PlaneGeometry(width, depth, segX, segZ)
+  geometry.rotateX(-Math.PI / 2)
+  geometry.translate(0, 0, -320) // spans z ≈ +155 … -795
+
+  const pos = geometry.attributes.position as THREE.BufferAttribute
+  const colors = new Float32Array(pos.count * 3)
+  const rockLow = new THREE.Color('#5866ab')
+  const rockHigh = new THREE.Color('#93a2d8')
+  const snow = new THREE.Color('#f7f9ff')
+  const vertexColor = new THREE.Color()
+
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i)
+    const z = pos.getZ(i)
+    // Valley corridor: low under the camera path, massifs rising to the
+    // sides and toward the horizon.
+    const side = smoothstep(48, 330, Math.abs(x))
+    const far = smoothstep(-150, -720, z)
+    const amp = 14 + 110 * side + 40 * far
+    const h =
+      Math.pow(ridged(x * 0.0042, z * 0.0042), 1.9) * amp +
+      ridged(x * 0.021, z * 0.021) * 3 -
+      26
+    pos.setY(i, h)
+
+    const snowT = smoothstep(30, 54, h + perlin(x * 0.05, z * 0.05) * 7)
+    vertexColor
+      .copy(rockLow)
+      .lerp(rockHigh, smoothstep(-26, 30, h))
+      .lerp(snow, snowT)
+    colors[i * 3] = vertexColor.r
+    colors[i * 3 + 1] = vertexColor.g
+    colors[i * 3 + 2] = vertexColor.b
+  }
+  pos.needsUpdate = true
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+  geometry.computeVertexNormals()
+
+  const material = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    flatShading: true,
+    roughness: 0.95,
+    metalness: 0,
   })
-  return meshes
+  const mesh = new THREE.Mesh(geometry, material)
+  scene.add(mesh)
+  return { mesh, material, geometry }
+}
+
+function buildLights(scene: THREE.Scene) {
+  // Cool sky bounce + warm low sun behind the far peaks + faint fill from
+  // the camera side so near slopes aren't dead black.
+  const hemi = new THREE.HemisphereLight(0xe6efff, 0x5f6cab, 0.95)
+  const sunLight = new THREE.DirectionalLight(0xffc9a0, 1.0)
+  sunLight.position.set(60, 70, -640)
+  const fill = new THREE.DirectionalLight(0xdfe7ff, 0.35)
+  fill.position.set(-80, 90, 320)
+  scene.add(hemi, sunLight, fill)
+  return { hemi, sunLight, fill }
 }
 
 function buildSun(scene: THREE.Scene) {
@@ -120,16 +212,22 @@ function buildSun(scene: THREE.Scene) {
   canvas.height = size
   const ctx = canvas.getContext('2d')!
   const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
-  gradient.addColorStop(0, 'rgba(255, 214, 150, 0.95)')
-  gradient.addColorStop(0.35, 'rgba(255, 190, 120, 0.45)')
+  gradient.addColorStop(0, 'rgba(255, 224, 170, 1)')
+  gradient.addColorStop(0.18, 'rgba(255, 214, 150, 0.9)')
+  gradient.addColorStop(0.42, 'rgba(255, 190, 120, 0.4)')
   gradient.addColorStop(1, 'rgba(255, 190, 120, 0)')
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, size, size)
   const texture = new THREE.CanvasTexture(canvas)
-  const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false })
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthWrite: false,
+    fog: false,
+  })
   const sprite = new THREE.Sprite(material)
-  sprite.position.set(30, -6, -260)
-  sprite.scale.set(160, 160, 1)
+  sprite.position.set(50, 32, -760)
+  sprite.scale.set(300, 300, 1)
   scene.add(sprite)
   return { sprite, material, texture }
 }
@@ -144,11 +242,12 @@ export interface HorizonSceneController {
 export function initHorizonScene(canvas: HTMLCanvasElement): HorizonSceneController {
   const rng = mulberry32(20260714)
   const scene = new THREE.Scene()
-  scene.fog = new THREE.FogExp2(0xe8eefc, 0.0011)
+  // Fog color matches the CSS sky's mid tone so far peaks dissolve into it.
+  scene.fog = new THREE.FogExp2(0xe6edfb, 0.00135)
 
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 2000)
   camera.position.set(0, CAMERA_PATH[0].y, CAMERA_PATH[0].z)
-  camera.lookAt(0, 14, -320)
+  camera.lookAt(LOOK_AT)
 
   const isMobile = window.innerWidth < 768
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: true })
@@ -156,31 +255,33 @@ export function initHorizonScene(canvas: HTMLCanvasElement): HorizonSceneControl
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.3 : 1.75))
 
   const stars = buildStars(scene, rng)
-  const ridges = buildRidges(scene, rng)
+  const terrain = buildTerrain(scene, rng, isMobile)
+  const lights = buildLights(scene)
   const sun = buildSun(scene)
 
-  let progress = 0
   let rendering = true
   let rafId = 0
 
   const applyProgress = (p: number) => {
-    progress = p
-    // Two-segment camera path: drift forward, then crest toward the horizon.
+    // Two-segment camera path: drift down the valley, then crest toward the
+    // far massif. The terrain is static — the moving camera is the parallax.
     const seg = p < 0.5 ? 0 : 1
     const t = seg === 0 ? p / 0.5 : (p - 0.5) / 0.5
     const from = CAMERA_PATH[seg]
     const to = CAMERA_PATH[seg + 1]
     camera.position.y = from.y + (to.y - from.y) * t
     camera.position.z = from.z + (to.z - from.z) * t
-    camera.lookAt(0, 14, -320)
+    camera.lookAt(LOOK_AT)
     // Stars dissolve into daylight across the first two thirds of the story.
     const starFade = Math.max(0, 1 - p * 1.7)
     stars.forEach(({ material }) => (material.uniforms.uOpacity.value = 0.9 * starFade))
-    // Sun swells and lifts slightly as dawn arrives.
-    const swell = 160 + p * 150
+    // The sun climbs and swells; its light warms the facets as dawn arrives.
+    const swell = 300 + p * 200
     sun.sprite.scale.set(swell, swell, 1)
-    sun.sprite.position.y = -6 + p * 26
-    sun.material.opacity = 0.75 + p * 0.25
+    sun.sprite.position.y = 32 + p * 34
+    sun.material.opacity = 0.8 + p * 0.2
+    lights.sunLight.intensity = 1.0 + p * 1.2
+    lights.hemi.intensity = 0.95 + p * 0.25
   }
 
   const clock = new THREE.Clock()
@@ -189,11 +290,6 @@ export function initHorizonScene(canvas: HTMLCanvasElement): HorizonSceneControl
     if (!rendering) return
     const elapsed = clock.getElapsedTime()
     stars.forEach(({ material }) => (material.uniforms.uTime.value = elapsed))
-    // Slow ambient sway on the ridges; scroll parallax rides on top.
-    ridges.forEach((ridge, i) => {
-      ridge.position.x = Math.sin(elapsed * 0.06 + i) * (2 + i)
-      ridge.position.y = progress * ridge.userData.parallax * 14
-    })
     renderer.render(scene, camera)
   }
   renderLoop()
@@ -215,10 +311,8 @@ export function initHorizonScene(canvas: HTMLCanvasElement): HorizonSceneControl
         points.geometry.dispose()
         material.dispose()
       })
-      ridges.forEach((ridge) => {
-        ridge.geometry.dispose()
-        ;(ridge.material as THREE.Material).dispose()
-      })
+      terrain.geometry.dispose()
+      terrain.material.dispose()
       sun.texture.dispose()
       sun.material.dispose()
       renderer.dispose()
