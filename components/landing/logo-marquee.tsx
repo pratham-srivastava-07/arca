@@ -17,11 +17,11 @@ function MarqueeRow({ names, reverse }: { names: string[]; reverse?: boolean }) 
         {track.map((name, i) => (
           <div
             key={`${name}-${i}`}
-            className="flex items-center gap-2.5 rounded-full border border-[#1b2447]/8 bg-white/70 py-2 pl-2 pr-4"
+            className="flex items-center gap-2.5 rounded-full border border-border bg-card py-2 pl-2 pr-4"
             aria-hidden={i >= names.length}
           >
             <ServiceLogo name={name} size={28} />
-            <span className="whitespace-nowrap text-sm font-medium text-[#33406e]">{name}</span>
+            <span className="whitespace-nowrap text-sm font-medium text-foreground">{name}</span>
           </div>
         ))}
       </div>
@@ -31,16 +31,17 @@ function MarqueeRow({ names, reverse }: { names: string[]; reverse?: boolean }) 
 
 export function LogoMarquee() {
   return (
-    <section className="bg-[#f7f9ff] py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-6">
-        <h2 className="text-center font-display text-2xl font-semibold tracking-tight text-[#1b2447] md:text-3xl">
+    <section className="border-y border-border bg-secondary/50 py-20 md:py-24">
+      <div className="mx-auto w-[min(100%-48px,1280px)]">
+        <h2 className="max-w-xl text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
           Works with everything you already pay for
         </h2>
-        <p className="mx-auto mt-3 max-w-md text-center text-sm leading-relaxed text-[#5a6690]">
-          Add any subscription in seconds. Logos, prices, and billing cycles come prefilled for the services you know.
+        <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground">
+          Add any subscription in seconds. Logos, prices, and billing cycles
+          come prefilled for the services you know.
         </p>
       </div>
-      <div className="mt-10 space-y-3">
+      <div className="mt-12 space-y-3">
         <MarqueeRow names={ROW_A} />
         <MarqueeRow names={ROW_B} reverse />
       </div>

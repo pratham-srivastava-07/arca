@@ -5,69 +5,83 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
-  --font-heading: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
-  --font-display: var(--font-display), var(--font-geist-sans), system-ui, sans-serif;
+  --font-heading: var(--font-geist-sans), system-ui, sans-serif;
+  --font-display: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* ── Light mode – premium off-white (Stripe/Vercel-inspired) ── */
+/*
+ * Design contract (design.md): warm paper base, ink foreground, one lime
+ * accent used sparingly (exposed as the `brand` token so shadcn's `accent`
+ * keeps meaning "quiet hover surface"). Light is the primary theme; dark
+ * is the ink world (#101514) used by the app's secondary theme and the
+ * landing's conversion section.
+ */
+
+/* ── Light – warm paper ── */
 :root {
-  --background: oklch(0.979 0 0);
-  --foreground: oklch(0.13 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0 0);
-  --primary: oklch(0.511 0.262 276.966);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.962 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.962 0 0);
-  --muted-foreground: oklch(0.52 0 0);
-  --accent: oklch(0.962 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.002 285);
-  --input: oklch(0.9 0.002 285);
-  --ring: oklch(0.511 0.262 276.966);
-  --chart-1: oklch(0.511 0.262 276.966);
-  --chart-2: oklch(0.585 0.233 264.531);
-  --chart-3: oklch(0.671 0.194 264.531);
-  --chart-4: oklch(0.731 0.143 264.531);
-  --chart-5: oklch(0.634 0.004 285.75);
-  --radius: 0.5rem;
-  /* Layered shadow tokens for light */
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-  --shadow-popover: 0 4px 24px -4px rgb(0 0 0 / 0.12), 0 2px 8px -2px rgb(0 0 0 / 0.06);
+  --background: #f7f7f3;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #f5f5ef;
+  --secondary: #eeeeeb;
+  --secondary-foreground: #111111;
+  --muted: #eeeeeb;
+  --muted-foreground: #6f6f6a;
+  --accent: #eeeeeb;
+  --accent-foreground: #111111;
+  --brand: #c9f36b;
+  --brand-foreground: #111111;
+  --destructive: oklch(0.55 0.21 27);
+  --border: rgba(17, 17, 17, 0.14);
+  --border-strong: rgba(17, 17, 17, 0.28);
+  --input: rgba(17, 17, 17, 0.14);
+  --ring: #111111;
+  --chart-1: #111111;
+  --chart-2: #b5e34f;
+  --chart-3: #6f6f6a;
+  --chart-4: #a0a09a;
+  --chart-5: #d9d9d2;
+  --radius: 0.625rem;
+  /* Borders carry structure; shadows stay near-invisible */
+  --shadow-card: 0 1px 2px 0 rgb(17 17 17 / 0.04);
+  --shadow-popover: 0 4px 24px -4px rgb(17 17 17 / 0.12), 0 2px 8px -2px rgb(17 17 17 / 0.06);
 }
 
-/* ── Dark mode – deep zinc + indigo ── */
+/* ── Dark – ink ── */
 .dark {
-  --background: oklch(0.107 0.004 285.75);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.75);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.163 0.005 285.75);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.585 0.233 264.531);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.224 0.006 285.75);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.224 0.006 285.75);
-  --muted-foreground: oklch(0.634 0.004 285.75);
-  --accent: oklch(0.271 0.006 285.75);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.224 0.006 285.75);
-  --input: oklch(0.224 0.006 285.75);
-  --ring: oklch(0.585 0.233 264.531);
-  --chart-1: oklch(0.585 0.233 264.531);
-  --chart-2: oklch(0.671 0.194 264.531);
-  --chart-3: oklch(0.731 0.143 264.531);
-  --chart-4: oklch(0.524 0.027 285.75);
-  --chart-5: oklch(0.634 0.004 285.75);
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --background: #101514;
+  --foreground: #f5f5ef;
+  --card: #161c1a;
+  --card-foreground: #f5f5ef;
+  --popover: #1a201e;
+  --popover-foreground: #f5f5ef;
+  --primary: #f5f5ef;
+  --primary-foreground: #111111;
+  --secondary: #1d2321;
+  --secondary-foreground: #f5f5ef;
+  --muted: #1d2321;
+  --muted-foreground: #a0a69f;
+  --accent: #222927;
+  --accent-foreground: #f5f5ef;
+  --brand: #c9f36b;
+  --brand-foreground: #111111;
+  --destructive: oklch(0.62 0.19 25);
+  --border: rgba(245, 245, 239, 0.12);
+  --border-strong: rgba(245, 245, 239, 0.26);
+  --input: rgba(245, 245, 239, 0.14);
+  --ring: #c9f36b;
+  --chart-1: #f5f5ef;
+  --chart-2: #c9f36b;
+  --chart-3: #a0a69f;
+  --chart-4: #6f756e;
+  --chart-5: #333a37;
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-popover: 0 8px 32px -4px rgb(0 0 0 / 0.5), 0 4px 12px -4px rgb(0 0 0 / 0.3);
 }
 
@@ -89,6 +103,9 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-border-strong: var(--border-strong);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -135,8 +152,8 @@ html.theme-transitioning *::after {
 
 /* ── Selection ── */
 ::selection {
-  background: oklch(0.585 0.233 264.531 / 0.18);
-  color: var(--foreground);
+  background: rgba(201, 243, 107, 0.45);
+  color: #111111;
 }
 
 /* ── Skeleton shimmer ── */
@@ -153,10 +170,10 @@ html.theme-transitioning *::after {
 :root .skeleton {
   background: linear-gradient(
     90deg,
-    oklch(0.93 0 0)  0%,
-    oklch(0.97 0 0) 35%,
-    oklch(0.93 0 0) 50%,
-    oklch(0.93 0 0) 100%
+    #ebebe6  0%,
+    #f3f3ee 35%,
+    #ebebe6 50%,
+    #ebebe6 100%
   );
   background-size: 400% 100%;
 }
@@ -164,10 +181,10 @@ html.theme-transitioning *::after {
 .dark .skeleton {
   background: linear-gradient(
     90deg,
-    oklch(0.18 0.005 285.75) 0%,
-    oklch(0.27 0.006 285.75) 35%,
-    oklch(0.18 0.005 285.75) 50%,
-    oklch(0.18 0.005 285.75) 100%
+    #1a201e 0%,
+    #242b28 35%,
+    #1a201e 50%,
+    #1a201e 100%
   );
   background-size: 400% 100%;
 }

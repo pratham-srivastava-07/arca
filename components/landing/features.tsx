@@ -1,127 +1,143 @@
-import { BarChart3, Bell, PiggyBank, Search, Target, TrendingUp } from 'lucide-react'
+import { Bell, BellOff } from 'lucide-react'
+import { ServiceLogo } from '@/components/ui/service-logo'
 
 /*
- * Feature bento: 6 features, 6 cells, mixed cell sizes with varied
- * backgrounds (ink, tinted gradient, plain) so the grid has rhythm instead
- * of six white cards.
+ * The hero makes three promises; these two splits deliver the second and
+ * third ("See the charge coming" / "Plan the whole year") with real product
+ * material: the renewals rail as a live component preview, and a forecast
+ * chart computed from the same demo lineup the preview shows.
  */
 
-function ReminderVisual() {
+const RENEWALS = [
+  { name: 'Netflix', when: 'renews in 2 days', price: '$15.49', reminder: true },
+  { name: 'Spotify', when: 'renews in 5 days', price: '$11.99', reminder: true },
+  { name: 'ChatGPT Plus', when: 'renews in 9 days', price: '$20.00', reminder: false },
+  { name: 'YouTube Premium', when: 'renews in 14 days', price: '$13.99', reminder: false },
+]
+
+function RenewalsPreview() {
   return (
-    <div className="mt-6 flex flex-col gap-2">
-      {[
-        { name: 'Netflix', days: 'in 3 days', amount: '$15.49', active: true },
-        { name: 'Spotify', days: 'in 11 days', amount: '$11.99', active: false },
-      ].map((row) => (
-        <div
-          key={row.name}
-          className={`flex items-center justify-between rounded-xl border px-4 py-3 ${
-            row.active ? 'border-primary/25 bg-primary/5' : 'border-[#1b2447]/8 bg-white/60'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <Bell className={`h-4 w-4 ${row.active ? 'text-primary' : 'text-[#8a93b8]'}`} />
-            <span className="text-sm font-medium text-[#1b2447]">{row.name}</span>
-            <span className="text-xs text-[#5a6690]">renews {row.days}</span>
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="flex items-baseline justify-between">
+        <p className="text-sm font-medium text-foreground">Upcoming renewals</p>
+        <p className="font-mono text-xs text-muted-foreground">next 14 days</p>
+      </div>
+      <div className="mt-2 divide-y divide-border">
+        {RENEWALS.map((item) => (
+          <div key={item.name} className="flex items-center gap-3 py-3.5">
+            <ServiceLogo name={item.name} size={32} />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-foreground">{item.name}</p>
+              <p className="text-xs text-muted-foreground">{item.when}</p>
+            </div>
+            {item.reminder ? (
+              <Bell className="h-3.5 w-3.5 text-foreground" aria-label="Reminder on" />
+            ) : (
+              <BellOff className="h-3.5 w-3.5 text-muted-foreground/50" aria-label="Reminder off" />
+            )}
+            <p className="w-16 text-right font-mono text-sm text-foreground">{item.price}</p>
           </div>
-          <span className="font-mono text-sm font-semibold text-[#1b2447]">{row.amount}</span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
 
-function ForecastVisual() {
+/*
+ * Forecast preview: 12 months of committed spend for the lineup above,
+ * with and without Netflix. Both series are computed here, not drawn by
+ * eye; the widening wedge is the argument.
+ */
+const MONTHLY_TOTAL = 94.5
+const MONTHLY_WITHOUT_NETFLIX = MONTHLY_TOTAL - 15.49
+
+function forecastPoints(monthly: number) {
+  const W = 560
+  const H = 280
+  const padX = 8
+  const padTop = 16
+  const padBottom = 34
+  const max = MONTHLY_TOTAL * 12
+  return Array.from({ length: 12 }, (_, i) => {
+    const x = padX + ((W - 150 - padX) * i) / 11
+    const y = H - padBottom - (H - padTop - padBottom) * ((monthly * (i + 1)) / max)
+    return `${x.toFixed(1)},${y.toFixed(1)}`
+  }).join(' ')
+}
+
+function ForecastPreview() {
+  const current = forecastPoints(MONTHLY_TOTAL)
+  const without = forecastPoints(MONTHLY_WITHOUT_NETFLIX)
+  const lastCurrent = current.split(' ').at(-1)!.split(',')
+  const lastWithout = without.split(' ').at(-1)!.split(',')
+
   return (
-    <svg viewBox="0 0 320 96" className="mt-6 h-24 w-full" role="img" aria-label="Rising 12-month spend forecast">
-      <defs>
-        <linearGradient id="forecast-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="oklch(0.511 0.262 276.966)" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="oklch(0.511 0.262 276.966)" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M0,78 C40,74 60,66 96,60 C132,54 150,58 186,48 C222,38 250,30 320,20 L320,96 L0,96 Z"
-        fill="url(#forecast-fill)"
-      />
-      <path
-        d="M0,78 C40,74 60,66 96,60 C132,54 150,58 186,48 C222,38 250,30 320,20"
-        fill="none"
-        stroke="oklch(0.511 0.262 276.966)"
-        strokeWidth="2"
-        strokeDasharray="4 4"
-        strokeLinecap="round"
-      />
-    </svg>
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <p className="text-sm font-medium text-foreground">Committed spend, next 12 months</p>
+      <svg
+        viewBox="0 0 560 280"
+        role="img"
+        aria-label="Forecast: $1,134 over 12 months as is, or $948 without Netflix"
+        className="mt-3 w-full"
+      >
+        <line x1="8" y1="246" x2="552" y2="246" stroke="var(--border)" strokeWidth="1" />
+        <polyline points={current} fill="none" stroke="var(--foreground)" strokeWidth="2" strokeLinecap="round" />
+        <polyline points={without} fill="none" stroke="var(--muted-foreground)" strokeWidth="1.5" strokeDasharray="5 5" strokeLinecap="round" />
+        <text x={Number(lastCurrent[0]) + 10} y={Number(lastCurrent[1]) + 4} className="fill-[var(--foreground)] font-mono text-[13px]">
+          $1,134
+        </text>
+        <text x={Number(lastWithout[0]) + 10} y={Number(lastWithout[1]) + 4} className="fill-[var(--muted-foreground)] font-mono text-[13px]">
+          $948
+        </text>
+        <text x="8" y="272" className="fill-[var(--muted-foreground)] font-mono text-[11px]">Aug &apos;26</text>
+        <text x="368" y="272" className="fill-[var(--muted-foreground)] font-mono text-[11px]">Jul &apos;27</text>
+      </svg>
+      <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1.5 text-xs text-muted-foreground">
+        <span className="flex items-center gap-2">
+          <span className="h-0.5 w-5 rounded-full bg-foreground" aria-hidden />
+          Current lineup
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="h-0 w-5 border-t border-dashed border-muted-foreground" aria-hidden />
+          Without Netflix: $186 back
+        </span>
+      </div>
+    </div>
   )
 }
 
 export function Features() {
   return (
-    <section id="features" className="bg-[#fdfdfe] py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-6">
-        <h2 className="max-w-2xl font-display text-3xl font-bold tracking-tight text-[#1b2447] md:text-4xl">
-          Everything between payday and renewal day
-        </h2>
-        <p className="mt-4 max-w-xl text-base leading-relaxed text-[#5a6690]">
-          Arca is built around the moments that actually cost you money: the renewal you forgot and the budget you meant to check.
-        </p>
-
-        <div className="mt-12 grid gap-4 md:grid-cols-4">
-          {/* Reminders: the retention hook gets the biggest cell */}
-          <div className="rounded-2xl border border-[#1b2447]/8 bg-gradient-to-br from-[#f2f5ff] to-white p-6 md:col-span-2">
-            <Bell className="h-5 w-5 text-primary" />
-            <h3 className="mt-4 text-lg font-semibold text-[#1b2447]">Renewal reminders</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#5a6690]">
-              An email three days before each charge. Cancel in time or let it renew on purpose.
-            </p>
-            <ReminderVisual />
-          </div>
-
-          {/* Forecasting */}
-          <div className="rounded-2xl border border-[#1b2447]/8 bg-white p-6 md:col-span-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <h3 className="mt-4 text-lg font-semibold text-[#1b2447]">12-month forecasting</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#5a6690]">
-              Every billing cycle projected forward, with what-if scenarios for price hikes and cancellations.
-            </p>
-            <ForecastVisual />
-          </div>
-
-          {/* Analytics: ink cell for contrast */}
-          <div className="rounded-2xl bg-[#161d38] p-6">
-            <BarChart3 className="h-5 w-5 text-[#9db1ff]" />
-            <h3 className="mt-4 text-lg font-semibold text-white">Spending analytics</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#aab4d6]">
-              Trends, categories, and a heatmap of the days your money actually leaves.
+    <section className="bg-background">
+      <div className="mx-auto w-[min(100%-48px,1280px)] space-y-24 py-24 md:space-y-32 md:py-32">
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">Reminders</p>
+            <h3 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              See the charge coming.
+            </h3>
+            <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
+              An email lands three days before each renewal. Cancel in time,
+              or let it renew on purpose. Either way, you decided.
             </p>
           </div>
+          <RenewalsPreview />
+        </div>
 
-          {/* Budgets */}
-          <div className="rounded-2xl border border-[#1b2447]/8 bg-white p-6">
-            <PiggyBank className="h-5 w-5 text-primary" />
-            <h3 className="mt-4 text-lg font-semibold text-[#1b2447]">Budgets</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#5a6690]">
-              Category limits with live progress, so overspending shows up before it happens.
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+          <div className="md:order-2">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">Forecasting</p>
+            <h3 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              Plan the whole year.
+            </h3>
+            <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
+              Every billing cycle projected forward. Ask what happens if a
+              price rises or a subscription goes, and read the answer off one
+              line.
             </p>
           </div>
-
-          {/* Goals */}
-          <div className="rounded-2xl border border-[#1b2447]/8 bg-white p-6">
-            <Target className="h-5 w-5 text-primary" />
-            <h3 className="mt-4 text-lg font-semibold text-[#1b2447]">Goals</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#5a6690]">
-              Emergency fund, vacation, new laptop. Progress rings with real velocity.
-            </p>
-          </div>
-
-          {/* Command palette: warm tint closes the grid */}
-          <div className="rounded-2xl border border-[#1b2447]/8 bg-gradient-to-br from-[#fff6e8] to-white p-6">
-            <Search className="h-5 w-5 text-[#b7791f]" />
-            <h3 className="mt-4 text-lg font-semibold text-[#1b2447]">Instant search</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#5a6690]">
-              Press <kbd className="rounded border border-[#1b2447]/15 bg-white px-1.5 py-0.5 font-mono text-xs">⌘K</kbd> and jump to any subscription, budget, or goal.
-            </p>
+          <div className="md:order-1">
+            <ForecastPreview />
           </div>
         </div>
       </div>

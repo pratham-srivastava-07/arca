@@ -140,14 +140,14 @@ export function HorizonHero() {
     <div className="flex flex-wrap items-center justify-center gap-3">
       <Link
         href="/signup"
-        className="group flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90 active:scale-[0.98]"
+        className="group flex items-center gap-2 rounded-lg bg-[#111111] px-5 py-2.5 text-sm font-medium text-[#f5f5ef] transition-colors hover:bg-[#2b2b28] active:translate-y-px"
       >
         Start for free
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Link>
       <Link
         href="/signin"
-        className="rounded-full border border-[#1b2447]/15 bg-white/50 px-6 py-3 text-sm font-medium text-[#1b2447] backdrop-blur-sm transition-colors hover:bg-white/80"
+        className="rounded-lg border border-[#111111]/15 bg-white/55 px-5 py-2.5 text-sm font-medium text-[#111111] backdrop-blur-sm transition-colors hover:bg-white/85 active:translate-y-px"
       >
         Sign in
       </Link>
@@ -158,10 +158,10 @@ export function HorizonHero() {
     return (
       <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-gradient-to-b from-[#dce7fb] via-[#eef3fd] to-[#fff3e2]">
         <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-          <h1 className="font-display text-4xl font-bold tracking-tight text-[#1b2447] md:text-6xl">
+          <h1 className="font-display text-4xl font-bold tracking-tight text-[#111111] md:text-6xl">
             {SECTIONS[0].headline}
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[#4a5578] md:text-lg">
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[#565d6b] md:text-lg">
             {SECTIONS[0].sub}
           </p>
           <div className="mt-8">{ctas}</div>
@@ -195,15 +195,15 @@ export function HorizonHero() {
           >
             <div className="mx-auto max-w-3xl pb-16 text-center">
               {i === 0 ? (
-                <h1 className="font-display text-4xl font-bold tracking-tight text-[#1b2447] md:text-6xl">
+                <h1 className="font-display text-4xl font-bold tracking-tight text-[#111111] md:text-6xl">
                   {section.headline}
                 </h1>
               ) : (
-                <h2 className="font-display text-4xl font-bold tracking-tight text-[#1b2447] md:text-6xl">
+                <h2 className="font-display text-4xl font-bold tracking-tight text-[#111111] md:text-6xl">
                   {section.headline}
                 </h2>
               )}
-              <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[#4a5578] md:text-lg">
+              <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[#565d6b] md:text-lg">
                 {section.sub}
               </p>
               {section.cta && <div className="mt-8">{ctas}</div>}
