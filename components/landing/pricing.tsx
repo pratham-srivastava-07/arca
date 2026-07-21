@@ -2,94 +2,81 @@ import Link from 'next/link'
 import { Check } from 'lucide-react'
 
 /*
- * Pricing copy states the real free-tier limits (7 subscriptions, reminders
- * on 2, 2 budgets, 2 goals, 1 month of history) so the landing page never
- * promises more than the product enforces.
+ * Editorial pricing: two columns inside one hairline frame, no card
+ * shadows. Copy states the real free-tier limits; the Pro column carries
+ * a note instead of a second signup button.
  */
 
-const TIERS = [
-  {
-    name: 'Free',
-    price: '$0',
-    period: 'forever',
-    description: 'Everything you need to see where your money goes.',
-    highlight: false,
-    features: [
-      'Up to 7 subscriptions',
-      'Renewal reminders on 2 of them',
-      '2 budgets and 2 goals',
-      'Last month of spending history',
-      'Dashboard, search, dark mode',
-    ],
-  },
-  {
-    name: 'Pro',
-    price: '$9',
-    period: 'per month',
-    description: 'For people whose subscriptions outgrew a mental list.',
-    highlight: true,
-    features: [
-      'Unlimited subscriptions, budgets, goals',
-      'Reminders on everything',
-      '12-month forecasting and scenarios',
-      'Full history, heatmap, CSV export',
-      'Priority support',
-    ],
-  },
+const FREE = [
+  'Up to 7 subscriptions',
+  'Renewal reminders on 2 of them',
+  '2 budgets and 2 goals',
+  'Last month of spending history',
+  'Dashboard, search, dark mode',
+]
+
+const PRO = [
+  'Unlimited subscriptions, budgets, goals',
+  'Reminders on everything',
+  '12-month forecasting and scenarios',
+  'Full history, heatmap, CSV export',
+  'Priority support',
 ]
 
 export function Pricing() {
   return (
-    <section id="pricing" className="bg-[#f7f9ff] py-20 md:py-28">
-      <div className="mx-auto max-w-4xl px-6">
-        <h2 className="text-center font-display text-3xl font-bold tracking-tight text-[#1b2447] md:text-4xl">
+    <section id="pricing" className="bg-background">
+      <div className="mx-auto w-[min(100%-48px,1280px)] py-24 md:py-32">
+        <h2 className="max-w-2xl text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
           Free to start. Honest when you outgrow it.
         </h2>
-        <div className="mt-12 grid gap-5 md:grid-cols-2">
-          {TIERS.map((tier) => (
-            <div
-              key={tier.name}
-              className={`rounded-2xl p-7 ${
-                tier.highlight
-                  ? 'border border-primary/25 bg-white shadow-xl shadow-primary/10'
-                  : 'border border-[#1b2447]/8 bg-white/70'
-              }`}
+
+        <div className="mt-12 grid overflow-hidden rounded-2xl border border-border bg-card md:grid-cols-2 md:divide-x md:divide-border">
+          <div className="flex flex-col p-8 max-md:border-b max-md:border-border md:p-10">
+            <p className="text-sm font-medium text-foreground">Free</p>
+            <p className="mt-3 flex items-baseline gap-2">
+              <span className="font-mono text-5xl font-medium tracking-tight text-foreground">$0</span>
+              <span className="text-sm text-muted-foreground">forever</span>
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Everything you need to see where your money goes.
+            </p>
+            <ul className="mt-8 flex-1 space-y-3">
+              {FREE.map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground" strokeWidth={2.5} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/signup"
+              className="mt-10 inline-flex w-fit items-center rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition-colors hover:bg-foreground/85 active:translate-y-px"
             >
-              <div className="flex items-baseline justify-between">
-                <h3 className="text-lg font-semibold text-[#1b2447]">{tier.name}</h3>
-                {tier.highlight && (
-                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                    Most complete
-                  </span>
-                )}
-              </div>
-              <div className="mt-4 flex items-baseline gap-1.5">
-                <span className="font-display text-4xl font-bold tracking-tight text-[#1b2447]">{tier.price}</span>
-                <span className="text-sm text-[#5a6690]">{tier.period}</span>
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-[#5a6690]">{tier.description}</p>
-              <ul className="mt-6 space-y-2.5">
-                {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5 text-sm text-[#33406e]">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/signup"
-                className={`mt-7 flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] ${
-                  tier.highlight
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:bg-primary/90'
-                    : 'border border-[#1b2447]/15 text-[#1b2447] hover:bg-white'
-                }`}
-              >
-                Start for free
-              </Link>
-            </div>
-          ))}
+              Start for free
+            </Link>
+          </div>
+
+          <div className="flex flex-col p-8 md:p-10">
+            <p className="text-sm font-medium text-foreground">Pro</p>
+            <p className="mt-3 flex items-baseline gap-2">
+              <span className="font-mono text-5xl font-medium tracking-tight text-foreground">$9</span>
+              <span className="text-sm text-muted-foreground">per month</span>
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              For people whose subscriptions outgrew a mental list.
+            </p>
+            <ul className="mt-8 flex-1 space-y-3">
+              {PRO.map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground" strokeWidth={2.5} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-10 text-sm text-muted-foreground">Pro billing opens soon.</p>
+          </div>
         </div>
-        <p className="mt-6 text-center text-xs text-[#8a93b8]">Pro billing opens soon.</p>
       </div>
     </section>
   )

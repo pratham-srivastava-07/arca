@@ -112,7 +112,7 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
         </div>
         <button
           onClick={() => setAddOpen(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-brand text-brand-foreground text-sm font-medium hover:bg-[color-mix(in_oklch,var(--brand),#111_8%)] transition-colors shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add subscription

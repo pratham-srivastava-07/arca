@@ -92,12 +92,15 @@ export function Sidebar() {
             <Link key={href} href={href}>
               <div
                 className={cn(
-                  'flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm cursor-pointer transition-colors duration-100',
+                  'relative flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm cursor-pointer transition-colors duration-100',
                   active
-                    ? 'bg-primary/10 text-primary font-medium'
+                    ? 'bg-secondary text-foreground font-medium'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 )}
               >
+                {active && (
+                  <span className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-brand" />
+                )}
                 <Icon className="w-4 h-4 shrink-0" strokeWidth={active ? 2.5 : 2} />
                 <AnimatePresence>
                   {!collapsed && (
@@ -122,11 +125,14 @@ export function Sidebar() {
       <div className="px-2 pb-2.5 pt-2 border-t border-border shrink-0 space-y-0.5">
         <Link href="/settings">
           <div className={cn(
-            'flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm cursor-pointer transition-colors duration-100',
+            'relative flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm cursor-pointer transition-colors duration-100',
             pathname === '/settings'
-              ? 'bg-primary/10 text-primary font-medium'
+              ? 'bg-secondary text-foreground font-medium'
               : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           )}>
+            {pathname === '/settings' && (
+              <span className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-brand" />
+            )}
             <Settings className="w-4 h-4 shrink-0" strokeWidth={2} />
             <AnimatePresence>
               {!collapsed && (
@@ -242,12 +248,15 @@ export function MobileSidebar() {
                   <Link key={href} href={href} onClick={() => setOpen(false)}>
                     <div
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm cursor-pointer transition-colors duration-100',
+                        'relative flex items-center gap-3 px-3 py-2.5 rounded-md text-sm cursor-pointer transition-colors duration-100',
                         active
-                          ? 'bg-primary/10 text-primary font-medium'
+                          ? 'bg-secondary text-foreground font-medium'
                           : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                       )}
                     >
+                      {active && (
+                        <span className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-brand" />
+                      )}
                       <Icon className="w-4 h-4 shrink-0" strokeWidth={active ? 2.5 : 2} />
                       {label}
                     </div>
@@ -260,11 +269,14 @@ export function MobileSidebar() {
             <div className="px-2 pb-[max(0.625rem,env(safe-area-inset-bottom))] pt-2 border-t border-border shrink-0 space-y-0.5">
               <Link href="/settings" onClick={() => setOpen(false)}>
                 <div className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm cursor-pointer transition-colors duration-100',
+                  'relative flex items-center gap-3 px-3 py-2.5 rounded-md text-sm cursor-pointer transition-colors duration-100',
                   pathname === '/settings'
-                    ? 'bg-primary/10 text-primary font-medium'
+                    ? 'bg-secondary text-foreground font-medium'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 )}>
+                  {pathname === '/settings' && (
+                    <span className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-brand" />
+                  )}
                   <Settings className="w-4 h-4 shrink-0" strokeWidth={2} />
                   Settings
                 </div>

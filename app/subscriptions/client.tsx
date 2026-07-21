@@ -280,7 +280,7 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
           </div>
           <button
             onClick={handleAdd}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand text-brand-foreground text-xs font-medium hover:bg-[color-mix(in_oklch,var(--brand),#111_8%)] transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />Add
           </button>
@@ -314,7 +314,7 @@ export function SubscriptionsClient({ initialSubscriptions }: { initialSubscript
           action={
             <button
               onClick={handleAdd}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand text-brand-foreground text-xs font-medium hover:bg-[color-mix(in_oklch,var(--brand),#111_8%)] transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />Add subscription
             </button>
