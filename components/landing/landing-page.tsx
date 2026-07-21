@@ -179,7 +179,7 @@ function DarkCta() {
 
 export function LandingPage({ isSignedIn }: { isSignedIn: boolean }) {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background">
+    <div className="force-light min-h-screen overflow-x-hidden bg-background text-foreground">
       <Nav isSignedIn={isSignedIn} />
       <main>
         <HorizonHero />

@@ -20,7 +20,11 @@
  */
 
 /* ── Light – warm paper ── */
-:root {
+/* `.force-light` re-declares the light tokens on its own subtree, so the
+ * marketing landing stays paper even when the app's saved theme is dark
+ * (design.md: the landing is a light page with one deliberate dark closer). */
+:root,
+.force-light {
   --background: #f7f7f3;
   --foreground: #111111;
   --card: #ffffff;
