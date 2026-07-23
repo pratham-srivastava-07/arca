@@ -23,6 +23,12 @@
 /* `.force-light` re-declares the light tokens on its own subtree, so the
  * marketing landing stays paper even when the app's saved theme is dark
  * (design.md: the landing is a light page with one deliberate dark closer). */
+.force-light {
+  /* Render native form controls light even when next-themes has set
+   * color-scheme: dark on <html> (otherwise Clerk's inputs go dark). */
+  color-scheme: light;
+}
+
 :root,
 .force-light {
   --background: #f7f7f3;
@@ -215,4 +221,58 @@ html.theme-transitioning *::after {
   .marquee-track-reverse {
     animation: none;
   }
+}
+
+/* ── Clerk auth widget (paper/ink brand) ──
+ * Clerk's own `.cl-internal-*` styles outrank utility classes and follow the
+ * viewer's color-scheme, so the sign-in card goes dark under a saved dark
+ * theme. These scoped `!important` rules pin it to the light brand. Scoped to
+ * `.force-light` (only present on the auth + landing shells) so the in-app
+ * UserButton keeps following the app theme. */
+.force-light .cl-card,
+.force-light .cl-cardBox,
+.force-light .cl-footer {
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+}
+.force-light .cl-headerTitle,
+.force-light .cl-formFieldLabel,
+.force-light .cl-identityPreviewText,
+.force-light .cl-formFieldInputShowPasswordButton {
+  color: #111111 !important;
+}
+.force-light .cl-headerSubtitle,
+.force-light .cl-dividerText,
+.force-light .cl-footerActionText,
+.force-light .cl-formFieldInput::placeholder {
+  color: #6f6f6a !important;
+}
+.force-light .cl-formFieldInput,
+.force-light .cl-otpCodeFieldInput {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid rgba(17, 17, 17, 0.16) !important;
+}
+.force-light .cl-formButtonPrimary {
+  background-color: #111111 !important;
+  color: #f5f5ef !important;
+  box-shadow: none !important;
+}
+.force-light .cl-formButtonPrimary:hover {
+  background-color: #2b2b28 !important;
+}
+.force-light .cl-socialButtonsBlockButton {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid rgba(17, 17, 17, 0.16) !important;
+}
+.force-light .cl-socialButtonsBlockButton:hover {
+  background-color: #f2f2ee !important;
+}
+.force-light .cl-socialButtonsBlockButtonText { color: #111111 !important; }
+.force-light .cl-dividerLine { background-color: rgba(17, 17, 17, 0.1) !important; }
+.force-light .cl-footerActionLink,
+.force-light .cl-identityPreviewEditButton,
+.force-light .cl-formResendCodeLink {
+  color: #111111 !important;
 }
