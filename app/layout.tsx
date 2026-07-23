@@ -9,8 +9,28 @@ const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Arca — Subscription & Finance Management',
-  description: 'Know exactly where your money goes. Track subscriptions, analyze spending, forecast budgets.',
+  metadataBase: new URL('https://arca.prathamexists.xyz'),
+  title: {
+    default: 'Arca — Know what you pay for',
+    template: '%s · Arca',
+  },
+  description:
+    'Track every subscription, see renewals before they charge, and plan the year ahead. Arca lines up every recurring charge in one place.',
+  keywords: ['subscriptions', 'subscription tracker', 'personal finance', 'renewals', 'budgeting', 'spending'],
+  openGraph: {
+    title: 'Arca — Know what you pay for',
+    description:
+      'Track every subscription, see renewals before they charge, and plan the year ahead.',
+    url: '/',
+    siteName: 'Arca',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Arca — Know what you pay for',
+    description:
+      'Track every subscription, see renewals before they charge, and plan the year ahead.',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

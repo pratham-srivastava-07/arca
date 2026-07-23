@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
   LayoutDashboard, CreditCard, BarChart3, TrendingUp,
-  PiggyBank, Target, Settings, ChevronLeft, ChevronRight, Zap, X,
+  PiggyBank, Target, Settings, ChevronLeft, ChevronRight, X,
 } from 'lucide-react'
+import { ArcaMark } from '@/components/ui/arca-mark'
 import { useAppStore } from '@/stores/app-store'
 import { useUser } from '@clerk/nextjs'
 import { cn } from '@/lib/utils'
@@ -66,9 +67,7 @@ export function Sidebar() {
     >
       {/* Logo */}
       <Link href="/" className="flex items-center h-14 px-3.5 border-b border-border shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
-        <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary shrink-0">
-          <Zap className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={2.5} />
-        </div>
+        <ArcaMark size={28} className="shrink-0" />
         <AnimatePresence>
           {!collapsed && (
             <motion.span
@@ -226,9 +225,7 @@ export function MobileSidebar() {
             {/* Header */}
             <div className="flex items-center justify-between h-14 pl-3.5 pr-2 border-b border-border shrink-0">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
-                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary shrink-0">
-                  <Zap className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={2.5} />
-                </div>
+                <ArcaMark size={28} className="shrink-0" />
                 <span className="font-semibold text-sm tracking-tight text-foreground">Arca</span>
               </Link>
               <button

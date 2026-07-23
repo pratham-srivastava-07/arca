@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight, LayoutDashboard, Zap } from 'lucide-react'
+import { ArrowRight, LayoutDashboard } from 'lucide-react'
+import { ArcaMark } from '@/components/ui/arca-mark'
 import { HorizonHero } from '@/components/ui/horizon-hero-section'
 import { LogoMarquee } from '@/components/landing/logo-marquee'
 import { Features } from '@/components/landing/features'
@@ -17,9 +18,7 @@ function Nav({ isSignedIn }: { isSignedIn: boolean }) {
     <nav className="fixed inset-x-0 top-0 z-20 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 w-[min(100%-48px,1280px)] items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-foreground">
-            <Zap className="h-3 w-3 text-background" strokeWidth={2.5} />
-          </div>
+          <ArcaMark size={24} />
           <span className="text-sm font-semibold tracking-tight text-foreground">Arca</span>
         </Link>
         <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
@@ -159,9 +158,7 @@ function DarkCta() {
       <footer className="relative border-t border-white/10">
         <div className="mx-auto flex w-[min(100%-48px,1280px)] flex-col items-start justify-between gap-6 py-10 md:flex-row md:items-center">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#f5f5ef]">
-              <Zap className="h-3 w-3 text-[#111111]" strokeWidth={2.5} />
-            </div>
+            <ArcaMark size={24} tile="#f5f5ef" arc="#a3d93f" horizon="#111111" />
             <span className="text-sm font-semibold tracking-tight text-[#f5f5ef]">Arca</span>
             <span className="ml-2 text-sm text-[#6f756e]">Know what you pay for.</span>
           </div>

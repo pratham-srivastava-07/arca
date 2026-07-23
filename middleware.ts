@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
 // '/dev' pages are screenshot/preview routes that 404 in production builds
-const isPublicRoute = createRouteMatcher(['/', '/signin(.*)', '/signup(.*)', '/api/cron(.*)', '/dev(.*)'])
+const isPublicRoute = createRouteMatcher(['/', '/signin(.*)', '/signup(.*)', '/api/cron(.*)', '/dev(.*)', '/opengraph-image(.*)'])
 
 export default clerkMiddleware(async (auth, request) => {
   const { userId } = await auth()
