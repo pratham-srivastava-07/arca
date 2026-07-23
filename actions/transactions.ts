@@ -48,6 +48,31 @@ export async function getMonthlySpend() {
   return Object.entries(byMonth).map(([month, amount]) => ({ month, amount: +amount.toFixed(2) }))
 }
 
+export async function getDailySpend(days = 84) {
+  const user = await getUserRecord()
+  const since = new Date()
+  since.setDate(since.getDate() - (days - 1))
+  since.setHours(0, 0, 0, 0)
+  const txs = await prisma.transaction.findMany({
+    where: { userId: user.id, type: 'debit', date: { gte: since } },
+    select: { amount: true, date: true },
+  })
+  const byDay: Record<string, number> = {}
+  for (const tx of txs) {
+    const key = tx.date.toISOString().split('T')[0]
+    byDay[key] = (byDay[key] ?? 0) + tx.amount
+  }
+  // Dense series: one entry per day, zero-filled, oldest first.
+  const series: { date: string; amount: number }[] = []
+  for (let i = 0; i < days; i++) {
+    const d = new Date(since)
+    d.setDate(since.getDate() + i)
+    const key = d.toISOString().split('T')[0]
+    series.push({ date: key, amount: +(byDay[key] ?? 0).toFixed(2) })
+  }
+  return series
+}
+
 export async function createTransaction(data: z.infer<typeof TransactionSchema>) {
   const user = await getUserRecord()
   const parsed = TransactionSchema.parse(data)

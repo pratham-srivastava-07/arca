@@ -6,7 +6,6 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts'
 import { GlassCard } from '@/components/ui/glass-card'
-import { HEATMAP_DATA } from '@/lib/data'
 import { formatCurrency, cn } from '@/lib/utils'
 import type { DbSubscription as Subscription } from '@/types'
 
@@ -55,24 +54,30 @@ const LineTip = ({ active, payload, label }: TipProps) => {
   )
 }
 
-const INDIGO_SHADES = [
-  'oklch(0.585 0.233 264.531)',
-  'oklch(0.52 0.21 264)',
-  'oklch(0.47 0.19 264)',
-  'oklch(0.43 0.17 264)',
-  'oklch(0.39 0.15 264)',
-  'oklch(0.36 0.12 264)',
+// Categorical palette anchored on the theme foreground (adapts to light and
+// dark) plus muted brand-harmonious mid-tones. Every entry stays legible on
+// both the paper and ink card; adjacent segments read as distinct without a
+// rainbow.
+const CATEGORY_COLORS = [
+  'var(--foreground)',
+  '#a3d93f',
+  '#c2a83f',
+  '#5f8a7d',
+  'var(--muted-foreground)',
+  '#b0794a',
 ]
 
 function HeatmapCell({ value, max }: { value: number; max: number }) {
   const intensity = max > 0 ? value / max : 0
+  // Mix the theme foreground toward transparent so the heatmap reads in both
+  // light (ink on paper) and dark (bone on ink) without hardcoded colors.
   return (
     <div
       className="w-3 h-3 rounded-sm"
       style={{
         backgroundColor: intensity === 0
           ? 'var(--muted)'
-          : `oklch(${0.585 - intensity * 0.12} ${0.233 * intensity + 0.05} 264.531 / ${0.2 + intensity * 0.8})`,
+          : `color-mix(in oklch, var(--foreground) ${Math.round(15 + intensity * 85)}%, transparent)`,
       }}
       title={formatCurrency(value)}
     />
@@ -82,9 +87,10 @@ function HeatmapCell({ value, max }: { value: number; max: number }) {
 interface Props {
   subscriptions: Subscription[]
   monthlySpend: { month: string; amount: number }[]
+  dailySpend: { date: string; amount: number }[]
 }
 
-export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
+export function AnalyticsClient({ subscriptions, monthlySpend, dailySpend }: Props) {
   const [range, setRange] = useState<TimeRange>('month')
 
   const chartData = useMemo(() => {
@@ -117,10 +123,10 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
     }))
   }, [subscriptions.length, monthlySpend])
 
-  const maxHeatmap = Math.max(...HEATMAP_DATA.map((d) => d.amount))
+  const maxHeatmap = dailySpend.length ? Math.max(...dailySpend.map((d) => d.amount)) : 0
   const weeksData: number[][] = []
-  for (let i = 0; i < HEATMAP_DATA.length; i += 7) {
-    weeksData.push(HEATMAP_DATA.slice(i, i + 7).map((d) => d.amount))
+  for (let i = 0; i < dailySpend.length; i += 7) {
+    weeksData.push(dailySpend.slice(i, i + 7).map((d) => d.amount))
   }
 
   const hasData = monthlySpend.length > 0
@@ -195,7 +201,7 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
                     <PieChart>
                       <Pie data={categorySpend} cx="50%" cy="50%" innerRadius={42} outerRadius={62} dataKey="amount" strokeWidth={0}>
                         {categorySpend.map((_, i) => (
-                          <Cell key={i} fill={INDIGO_SHADES[i % INDIGO_SHADES.length]} />
+                          <Cell key={i} fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]} />
                         ))}
                       </Pie>
                       <Tooltip content={<PieTip />} />
@@ -205,7 +211,7 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
                 <div className="space-y-2 w-full min-[480px]:w-auto min-[480px]:flex-1 min-w-0">
                   {categorySpend.map((cat, i) => (
                     <div key={cat.category} className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: INDIGO_SHADES[i % INDIGO_SHADES.length] }} />
+                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }} />
                       <span className="text-xs text-muted-foreground flex-1 truncate">{cat.category}</span>
                       <span className="text-xs font-semibold text-foreground tabular-nums">{formatCurrency(cat.amount)}</span>
                     </div>
@@ -266,12 +272,15 @@ export function AnalyticsClient({ subscriptions, monthlySpend }: Props) {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
         <GlassCard>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-foreground">Spending Heatmap</h3>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Spending Heatmap</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Last 12 weeks</p>
+            </div>
             <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <span>Less</span>
               {[0, 0.25, 0.5, 0.75, 1].map((v, i) => (
                 <div key={i} className="w-3 h-3 rounded-sm" style={{
-                  backgroundColor: v === 0 ? 'var(--muted)' : `oklch(${0.585 - v * 0.12} ${0.233 * v + 0.05} 264.531 / ${0.2 + v * 0.8})`,
+                  backgroundColor: v === 0 ? 'var(--muted)' : `color-mix(in oklch, var(--foreground) ${Math.round(15 + v * 85)}%, transparent)`,
                 }} />
               ))}
               <span>More</span>

@@ -156,7 +156,7 @@ export function OnboardingClient({ userName }: Props) {
               </div>
               <button
                 onClick={() => setStep(1)}
-                className="flex items-center gap-2 mx-auto px-8 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:bg-primary/90 transition-all"
+                className="flex items-center gap-2 mx-auto px-8 py-3 rounded-xl bg-brand text-brand-foreground font-semibold text-base hover:bg-[color-mix(in_oklch,var(--brand),#111_8%)] transition-all"
               >
                 Get started
                 <ChevronRight className="w-5 h-5" />
@@ -272,7 +272,7 @@ export function OnboardingClient({ userName }: Props) {
                 </button>
                 <button
                   onClick={() => setStep(2)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-brand text-brand-foreground font-semibold text-sm hover:bg-[color-mix(in_oklch,var(--brand),#111_8%)] transition-all"
                 >
                   Continue
                   <ChevronRight className="w-4 h-4" />
@@ -318,7 +318,7 @@ export function OnboardingClient({ userName }: Props) {
                 <button
                   onClick={finish}
                   disabled={pending}
-                  className="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:bg-primary/90 transition-all disabled:opacity-60"
+                  className="flex items-center gap-2 px-8 py-3 rounded-xl bg-brand text-brand-foreground font-semibold text-base hover:bg-[color-mix(in_oklch,var(--brand),#111_8%)] transition-all disabled:opacity-60"
                 >
                   {pending ? (
                     <>

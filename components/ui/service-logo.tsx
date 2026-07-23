@@ -6,6 +6,17 @@ const SERVICE_COLORS: Record<string, { bg: string; color: string }> = {
   'ChatGPT Plus': { bg: '#10a37f', color: '#fff' },
   AWS: { bg: '#FF9900', color: '#232f3e' },
   Hulu: { bg: '#1ce783', color: '#000' },
+  Notion: { bg: '#191919', color: '#fff' },
+  'iCloud+': { bg: '#3693F3', color: '#fff' },
+  'Xbox Game Pass': { bg: '#107C10', color: '#fff' },
+  Figma: { bg: '#1e1e1e', color: '#fff' },
+  'Adobe CC': { bg: '#FA0F00', color: '#fff' },
+  'Disney+': { bg: '#0d2481', color: '#fff' },
+  Audible: { bg: '#F8991C', color: '#000' },
+  'Canva Pro': { bg: '#7d2ae8', color: '#fff' },
+  'Amazon Prime': { bg: '#00A8E1', color: '#fff' },
+  Dropbox: { bg: '#0061FF', color: '#fff' },
+  Crunchyroll: { bg: '#F47521', color: '#fff' },
 }
 
 interface ServiceLogoProps {

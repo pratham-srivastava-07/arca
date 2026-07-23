@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, type Variants } from 'framer-motion'
-import { DollarSign, CreditCard, Calendar, TrendingUp, ArrowUpRight, ArrowDownLeft, Plus } from 'lucide-react'
+import { DollarSign, CreditCard, Calendar, TrendingUp, ArrowUpRight, ArrowDownLeft, Plus, Bell } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { MetricCard } from '@/components/ui/metric-card'
 import { GlassCard } from '@/components/ui/glass-card'
@@ -46,6 +46,20 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   )
 }
 
+function renewalChip(days: number) {
+  const label = days <= 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days}d`
+  const urgent = days <= 3
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-[11px] font-medium tabular-nums ${
+        urgent ? 'bg-amber-500/12 text-amber-500' : 'bg-muted text-muted-foreground'
+      }`}
+    >
+      {label}
+    </span>
+  )
+}
+
 export function DashboardClient({ user, subscriptions, transactions, monthlySpend }: Props) {
   const [greeting, setGreeting] = useState('')
   const [addOpen, setAddOpen] = useState(false)
@@ -53,18 +67,32 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
   useEffect(() => { setGreeting(getGreeting()) }, [])
 
   const activeSubs = subscriptions.filter((s) => s.status === 'active')
+  const pausedCount = subscriptions.filter((s) => s.status === 'paused').length
   const monthlyTotal = activeSubs.reduce((sum, s) => sum + (s.billingCycle === 'yearly' ? s.amount / 12 : s.amount), 0)
-  const upcoming = activeSubs
-    .filter((s) => daysUntil(s.nextPaymentDate.toISOString().split('T')[0]) <= 7)
-    .reduce((sum, s) => sum + s.amount, 0)
+
+  const withDays = activeSubs.map((s) => ({ sub: s, days: daysUntil(s.nextPaymentDate.toISOString().split('T')[0]) }))
+  const dueThisWeek = withDays.filter(({ days }) => days <= 7)
+  const upcomingTotal = dueThisWeek.reduce((sum, { sub }) => sum + sub.amount, 0)
+  const nextRenewals = [...withDays].sort((a, b) => a.days - b.days).slice(0, 5)
+
   const ytdSpend = monthlySpend.reduce((sum, m) => sum + m.amount, 0)
   const topSubs = [...activeSubs].sort((a, b) => b.amount - a.amount).slice(0, 4)
-  const avgMonthly = monthlySpend.length ? monthlySpend.reduce((a, m) => a + m.amount, 0) / monthlySpend.length : 0
+  const avgMonthly = monthlySpend.length ? ytdSpend / monthlySpend.length : 0
+  // Real month-over-month delta from transaction history; hidden when there
+  // isn't enough history to compare.
+  const momChangeRaw =
+    monthlySpend.length >= 2 && monthlySpend[monthlySpend.length - 2].amount > 0
+      ? ((monthlySpend[monthlySpend.length - 1].amount - monthlySpend[monthlySpend.length - 2].amount) /
+          monthlySpend[monthlySpend.length - 2].amount) *
+        100
+      : undefined
+  // Sub-0.1% movements are noise, not signal
+  const momChange = momChangeRaw !== undefined && Math.abs(momChangeRaw) >= 0.1 ? momChangeRaw : undefined
 
   const firstName = user.name.split(' ')[0]
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       <SubscriptionModal
         open={addOpen}
         onClose={() => setAddOpen(false)}
@@ -74,17 +102,17 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
       {/* Greeting */}
       <motion.div
         initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
-        className="flex flex-wrap items-start justify-between gap-3"
+        className="flex flex-wrap items-end justify-between gap-3"
       >
         <div className="min-w-0">
           <p className="text-sm text-muted-foreground">{greeting}</p>
-          <h1 className="text-xl sm:text-2xl font-semibold text-foreground tracking-tight mt-0.5">
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold text-foreground tracking-tight mt-0.5">
             Good to see you, {firstName}
           </h1>
         </div>
         <button
           onClick={() => setAddOpen(true)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-brand text-brand-foreground text-sm font-medium hover:bg-[color-mix(in_oklch,var(--brand),#111_8%)] transition-colors shrink-0"
         >
           <Plus className="w-4 h-4" />
           Add subscription
@@ -99,20 +127,47 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
         className="grid grid-cols-2 xl:grid-cols-4 gap-2.5 sm:gap-3"
       >
         <motion.div variants={stagger.item}>
-          <MetricCard label="Monthly Spend" value={monthlyTotal} prefix="$" decimals={2} change={+4.2} icon={<DollarSign className="w-4 h-4" />} />
+          <MetricCard
+            label="Monthly Spend"
+            value={monthlyTotal}
+            prefix="$"
+            decimals={2}
+            change={momChange}
+            goodWhenDown
+            icon={<DollarSign className="w-4 h-4" />}
+          />
         </motion.div>
         <motion.div variants={stagger.item}>
-          <MetricCard label="Active Subscriptions" value={activeSubs.length} change={0} icon={<CreditCard className="w-4 h-4" />} />
+          <MetricCard
+            label="Active Subscriptions"
+            value={activeSubs.length}
+            changeLabel={pausedCount > 0 ? `${pausedCount} paused` : undefined}
+            icon={<CreditCard className="w-4 h-4" />}
+          />
         </motion.div>
         <motion.div variants={stagger.item}>
-          <MetricCard label="Due This Week" value={upcoming} prefix="$" decimals={2} change={-2.1} icon={<Calendar className="w-4 h-4" />} />
+          <MetricCard
+            label="Due This Week"
+            value={upcomingTotal}
+            prefix="$"
+            decimals={2}
+            changeLabel={dueThisWeek.length > 0 ? `${dueThisWeek.length} renewal${dueThisWeek.length === 1 ? '' : 's'}` : 'Nothing due'}
+            icon={<Calendar className="w-4 h-4" />}
+          />
         </motion.div>
         <motion.div variants={stagger.item}>
-          <MetricCard label="YTD Spend" value={ytdSpend} prefix="$" decimals={2} change={+11.8} icon={<TrendingUp className="w-4 h-4" />} />
+          <MetricCard
+            label="YTD Spend"
+            value={ytdSpend}
+            prefix="$"
+            decimals={2}
+            changeLabel={avgMonthly > 0 ? `${formatCurrency(avgMonthly)}/mo average` : undefined}
+            icon={<TrendingUp className="w-4 h-4" />}
+          />
         </motion.div>
       </motion.div>
 
-      {/* Chart + Top Subscriptions */}
+      {/* Chart + Upcoming renewals */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -120,7 +175,7 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
           transition={{ duration: 0.35, delay: 0.2 }}
           className="xl:col-span-3"
         >
-          <GlassCard>
+          <GlassCard className="h-full">
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h3 className="text-sm font-semibold text-foreground">Monthly Spend</h3>
@@ -132,7 +187,7 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
               </div>
             </div>
             {monthlySpend.length > 0 ? (
-              <div className="h-44">
+              <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={monthlySpend} margin={{ top: 4, right: 0, bottom: 0, left: -20 }}>
                     <defs>
@@ -149,7 +204,7 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-44 flex items-center justify-center">
+              <div className="h-48 flex items-center justify-center">
                 <p className="text-sm text-muted-foreground">No spending history yet</p>
               </div>
             )}
@@ -164,12 +219,12 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
         >
           <GlassCard className="h-full">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-foreground">Top Subscriptions</h3>
-              <span className="text-xs text-muted-foreground">{activeSubs.length} active</span>
+              <h3 className="text-sm font-semibold text-foreground">Upcoming Renewals</h3>
+              <span className="text-xs text-muted-foreground">next 5</span>
             </div>
-            {topSubs.length > 0 ? (
+            {nextRenewals.length > 0 ? (
               <div className="space-y-3">
-                {topSubs.map((sub, i) => (
+                {nextRenewals.map(({ sub, days }, i) => (
                   <motion.div
                     key={sub.id}
                     initial={{ opacity: 0, x: 8 }}
@@ -179,16 +234,22 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
                   >
                     <ServiceLogo name={sub.name} size={30} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{sub.name}</p>
-                      <p className="text-xs text-muted-foreground capitalize">{sub.billingCycle}</p>
+                      <p className="text-sm font-medium text-foreground truncate flex items-center gap-1.5">
+                        {sub.name}
+                        {sub.reminderEnabled && <Bell className="w-3 h-3 text-primary shrink-0" aria-label="Reminder on" />}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{formatDate(sub.nextPaymentDate.toISOString().split('T')[0])}</p>
                     </div>
-                    <p className="text-sm font-semibold text-foreground tabular-nums">{formatCurrency(sub.amount)}</p>
+                    <div className="flex items-center gap-2">
+                      {renewalChip(days)}
+                      <p className="text-sm font-semibold text-foreground tabular-nums">{formatCurrency(sub.amount)}</p>
+                    </div>
                   </motion.div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-24 gap-2">
-                <p className="text-sm text-muted-foreground">No subscriptions yet</p>
+                <p className="text-sm text-muted-foreground">No active subscriptions yet</p>
                 <button
                   onClick={() => setAddOpen(true)}
                   className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
@@ -201,51 +262,92 @@ export function DashboardClient({ user, subscriptions, transactions, monthlySpen
         </motion.div>
       </div>
 
-      {/* Recent Transactions */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.35 }}
-      >
-        <GlassCard>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-foreground">Recent Transactions</h3>
-            <span className="text-xs text-muted-foreground">Last {transactions.length}</span>
-          </div>
-          {transactions.length > 0 ? (
-            <div className="space-y-0.5">
-              {transactions.map((tx, i) => (
-                <motion.div
-                  key={tx.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.38 + i * 0.05 }}
-                  className="flex items-center gap-3 py-2.5 border-b border-border/40 last:border-0"
-                >
-                  <div className={`flex items-center justify-center w-7 h-7 rounded-md ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-muted'}`}>
-                    {tx.type === 'credit' ? (
-                      <ArrowDownLeft className="w-3.5 h-3.5 text-green-500" />
-                    ) : (
-                      <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{tx.merchant}</p>
-                    <p className="text-xs text-muted-foreground">{formatDate(tx.date.toISOString().split('T')[0])} · {tx.category}</p>
-                  </div>
-                  <p className={`text-sm font-semibold tabular-nums ${tx.type === 'credit' ? 'text-green-500' : 'text-foreground'}`}>
-                    {tx.type === 'credit' ? '+' : '-'}{formatCurrency(Math.abs(tx.amount))}
-                  </p>
-                </motion.div>
-              ))}
+      {/* Top subscriptions + Recent transactions */}
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.32 }}
+          className="xl:col-span-2"
+        >
+          <GlassCard className="h-full">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground">Top Subscriptions</h3>
+              <span className="text-xs text-muted-foreground">{activeSubs.length} active</span>
             </div>
-          ) : (
-            <div className="py-8 text-center">
-              <p className="text-sm text-muted-foreground">No transactions yet</p>
+            {topSubs.length > 0 ? (
+              <div className="space-y-3">
+                {topSubs.map((sub, i) => (
+                  <motion.div
+                    key={sub.id}
+                    initial={{ opacity: 0, x: 8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.25, delay: 0.34 + i * 0.06 }}
+                    className="flex items-center gap-3"
+                  >
+                    <ServiceLogo name={sub.name} size={30} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{sub.name}</p>
+                      <p className="text-xs text-muted-foreground capitalize">{sub.billingCycle}</p>
+                    </div>
+                    <p className="text-sm font-semibold text-foreground tabular-nums">{formatCurrency(sub.amount)}</p>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-8 text-center">
+                <p className="text-sm text-muted-foreground">No subscriptions yet</p>
+              </div>
+            )}
+          </GlassCard>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.35 }}
+          className="xl:col-span-3"
+        >
+          <GlassCard className="h-full">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground">Recent Transactions</h3>
+              <span className="text-xs text-muted-foreground">Last {transactions.length}</span>
             </div>
-          )}
-        </GlassCard>
-      </motion.div>
+            {transactions.length > 0 ? (
+              <div className="space-y-0.5">
+                {transactions.map((tx, i) => (
+                  <motion.div
+                    key={tx.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.38 + i * 0.05 }}
+                    className="flex items-center gap-3 py-2.5 border-b border-border/40 last:border-0"
+                  >
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-md ${tx.type === 'credit' ? 'bg-green-500/10' : 'bg-muted'}`}>
+                      {tx.type === 'credit' ? (
+                        <ArrowDownLeft className="w-3.5 h-3.5 text-green-500" />
+                      ) : (
+                        <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{tx.merchant}</p>
+                      <p className="text-xs text-muted-foreground">{formatDate(tx.date.toISOString().split('T')[0])} · {tx.category}</p>
+                    </div>
+                    <p className={`text-sm font-semibold tabular-nums ${tx.type === 'credit' ? 'text-green-500' : 'text-foreground'}`}>
+                      {tx.type === 'credit' ? '+' : '-'}{formatCurrency(Math.abs(tx.amount))}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-8 text-center">
+                <p className="text-sm text-muted-foreground">No transactions yet</p>
+              </div>
+            )}
+          </GlassCard>
+        </motion.div>
+      </div>
     </div>
   )
 }
