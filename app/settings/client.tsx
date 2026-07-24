@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react'
 import { motion } from 'framer-motion'
 import { User, Bell, Shield, Trash2, Loader2, Check } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
+import { Switch } from '@/components/ui/switch'
 import { updateUserProfile, setRemindersMuted } from '@/actions/user'
 
 interface UserData {
@@ -96,29 +97,28 @@ function NotificationsSection({ remindersMuted }: { remindersMuted: boolean }) {
       </div>
       <div className="space-y-4">
         {[
-          { key: 'renewalReminders' as const, label: 'Renewal reminders', desc: 'Get notified 3 days before a subscription renews' },
-          { key: 'budgetAlerts' as const, label: 'Budget alerts', desc: 'Alert when you reach 80% of a budget category (coming soon)' },
-          { key: 'weeklyReport' as const, label: 'Weekly report', desc: 'Weekly spending summary every Monday (coming soon)' },
+          { key: 'renewalReminders' as const, label: 'Renewal reminders', desc: 'Get notified 3 days before a subscription renews', soon: false },
+          { key: 'budgetAlerts' as const, label: 'Budget alerts', desc: 'Alert when you reach 80% of a budget category', soon: true },
+          { key: 'weeklyReport' as const, label: 'Weekly report', desc: 'Weekly spending summary every Monday', soon: true },
         ].map((item) => (
-          <div key={item.key} className="flex items-center justify-between gap-4">
+          <div key={item.key} className={`flex items-center justify-between gap-4 ${item.soon ? 'opacity-60' : ''}`}>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-foreground">{item.label}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-foreground">{item.label}</p>
+                {item.soon && (
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground border border-border rounded px-1.5 py-0.5 leading-none">
+                    Soon
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">{item.desc}</p>
             </div>
-            <button
-              onClick={() => toggle(item.key)}
+            <Switch
+              checked={item.soon ? false : prefs[item.key]}
+              onCheckedChange={() => toggle(item.key)}
+              disabled={item.soon}
               aria-label={`Toggle ${item.label}`}
-              className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                prefs[item.key] ? 'bg-primary' : 'bg-muted'
-              }`}
-            >
-              <span
-                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
-                  prefs[item.key] ? 'translate-x-4.5' : 'translate-x-0.5'
-                }`}
-                style={{ transform: prefs[item.key] ? 'translateX(18px)' : 'translateX(2px)' }}
-              />
-            </button>
+            />
           </div>
         ))}
       </div>

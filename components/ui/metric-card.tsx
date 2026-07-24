@@ -41,7 +41,7 @@ export function MetricCard({
       className="rounded-xl bg-card border border-border p-4 sm:p-5"
     >
       <div className="flex items-start justify-between mb-3 sm:mb-4">
-        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-muted text-muted-foreground">
+        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-secondary text-foreground">
           {icon}
         </div>
         {change !== undefined && (

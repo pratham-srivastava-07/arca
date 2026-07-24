@@ -4,7 +4,6 @@ import { Search, Bell, Command, Menu } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { UserButton } from '@clerk/nextjs'
 import { useAppStore } from '@/stores/app-store'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 const PAGE_TITLES: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -56,8 +55,6 @@ export function TopBar() {
             <Command className="w-2.5 h-2.5" />K
           </kbd>
         </button>
-
-        <ThemeToggle />
 
         <button className="relative flex items-center justify-center w-8 h-8 rounded-md bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors duration-100">
           <Bell className="w-3.5 h-3.5" />
