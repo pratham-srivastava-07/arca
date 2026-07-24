@@ -9,20 +9,33 @@ export async function syncUser() {
   const clerkUser = await currentUser()
   if (!clerkUser) return null
 
-  return prisma.user.upsert({
-    where: { clerkId: userId },
-    update: {
-      email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
-      name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim(),
-      avatar: clerkUser.imageUrl,
-    },
-    create: {
-      clerkId: userId,
-      email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
-      name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim(),
-      avatar: clerkUser.imageUrl,
-      onboardingCompleted: false,
-    },
+  const email = clerkUser.emailAddresses[0]?.emailAddress ?? ''
+  const name = `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim()
+  const avatar = clerkUser.imageUrl
+
+  // Existing account for this Clerk user — just refresh profile fields.
+  const byClerk = await prisma.user.findUnique({ where: { clerkId: userId } })
+  if (byClerk) {
+    return prisma.user.update({
+      where: { clerkId: userId },
+      data: { email, name, avatar },
+    })
+  }
+
+  // A row with this email may already exist under a different clerkId (e.g. the
+  // account was first created on the dev Clerk instance, now signing in via the
+  // production instance). Re-link it to the current Clerk account rather than
+  // colliding on the unique `email` field.
+  const byEmail = email ? await prisma.user.findUnique({ where: { email } }) : null
+  if (byEmail) {
+    return prisma.user.update({
+      where: { id: byEmail.id },
+      data: { clerkId: userId, name, avatar },
+    })
+  }
+
+  return prisma.user.create({
+    data: { clerkId: userId, email, name, avatar, onboardingCompleted: false },
   })
 }
 
